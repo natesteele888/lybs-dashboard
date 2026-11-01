@@ -1,5 +1,9 @@
 # LYBS Reporting — AI Contributor Rules
 
+> **Nov 2026 — this public repo is CODE ONLY.** Nathan's rule: no player data in any public repo, not even first name + last initial.
+> `data.js` and `gc_stats.js` ship empty here and `processed_data.xlsx` is gitignored. Player records, stats and amounts live only in the
+> private `lybs-reporting` repo. Never run `process.py` output into this repo. Coaches' published contact info is the one allowed exception.
+
 ## Privacy Rules — Non-Negotiable
 
 The following personal information must **never** appear in any committed file under any circumstances:
