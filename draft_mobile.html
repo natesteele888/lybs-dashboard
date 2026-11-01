@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LYBS Draft · Live</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #050d1a;
+  --card: #0a1628;
+  --card2: #0d1f3c;
+  --border: rgba(255,255,255,0.08);
+  --gold: #f5a623;
+  --green: #10b981;
+  --blue: #3b82f6;
+  --text1: #f0f4ff;
+  --text2: rgba(255,255,255,0.45);
+  --header-h: 58px;
+  --bottom-h: 82px;
+}
+html, body {
+  background: var(--bg); color: var(--text1);
+  font-family: 'Inter', sans-serif;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+#hdr {
+  flex-shrink: 0;
+  height: var(--header-h);
+  background: rgba(5,13,26,0.97);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 14px; gap: 10px;
+  z-index: 50;
+}
+#hdr-left { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+#hdr-round {
+  font-family: 'Bebas Neue'; font-size: 11px; letter-spacing: 1.5px;
+  color: var(--text2); line-height: 1;
+}
+#hdr-team {
+  font-family: 'Bebas Neue'; font-size: 22px; line-height: 1.15;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#hdr-right { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; }
+#hdr-pick { font-size: 10px; color: var(--text2); }
+#hdr-runtime {
+  font-family: 'Bebas Neue'; font-size: 17px; color: var(--text2); letter-spacing: 1px;
+}
+#hdr-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--text2); flex-shrink: 0;
+  transition: background .4s;
+}
+#hdr-dot.live { background: var(--green); box-shadow: 0 0 7px var(--green); }
+
+/* ── SCROLL AREA ── */
+#scroll-area {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── SEARCH ── */
+#search-wrap {
+  padding: 10px 12px 6px;
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+}
+#search {
+  width: 100%; background: var(--card2);
+  border: 1px solid var(--border); border-radius: 9px;
+  color: var(--text1); font-size: 14px;
+  padding: 9px 14px; display: block;
+}
+#search::placeholder { color: var(--text2); }
+#search:focus { outline: none; border-color: rgba(59,130,246,.5); }
+#avail-count {
+  font-size: 11px; color: var(--text2);
+  padding: 4px 14px 2px;
+}
+
+/* ── PLAYER LIST ── */
+#player-list {
+  padding: 4px 10px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.prow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 9px;
+  background: var(--card); border: 1px solid var(--border);
+}
+.prow-info { flex: 1; min-width: 0; }
+.prow-name { font-weight: 600; font-size: 14px; line-height: 1.2; }
+.prow-city { font-size: 10px; color: var(--text2); }
+.prow-badges { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.pbadge {
+  font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.07); color: rgba(255,255,255,.55);
+  letter-spacing: .4px;
+}
+.cmp-btn {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.4); font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.cmp-btn-on {
+  background: rgba(96,165,250,.15); border-color: rgba(96,165,250,.4); color: #60a5fa;
+}
+
+/* ── COMPARE BAR ── */
+#compare-bar {
+  display: none; flex-shrink: 0;
+  background: rgba(10,22,40,0.98); border-bottom: 1px solid rgba(96,165,250,.3);
+  padding: 8px 12px; flex-direction: row; align-items: center; gap: 8px;
+  z-index: 45;
+}
+#compare-names { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+.cname-tag {
+  padding: 3px 9px; border-radius: 6px; background: rgba(96,165,250,.12);
+  border: 1px solid rgba(96,165,250,.3); font-size: 11px; font-weight: 600; color: #60a5fa;
+}
+#compare-go {
+  padding: 5px 12px; border-radius: 7px; background: rgba(96,165,250,.18);
+  border: 1px solid rgba(96,165,250,.5); color: #60a5fa; font-size: 11px;
+  font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+#compare-clear {
+  padding: 5px 10px; border-radius: 7px; background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.4);
+  font-size: 11px; cursor: pointer;
+}
+
+/* Compare sheet */
+#compare-sheet {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,.7); align-items: flex-end;
+}
+#compare-sheet.open { display: flex; }
+#compare-inner {
+  background: #0a1628; border-radius: 18px 18px 0 0;
+  border-top: 1px solid rgba(96,165,250,.3);
+  width: 100%; max-height: 80dvh; overflow-y: auto;
+  padding: 14px 14px 28px;
+}
+#compare-inner-hdr {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+#compare-title { font-family: 'Bebas Neue'; font-size: 20px; color: var(--gold); letter-spacing: 1px; }
+#compare-close-btn {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); border: none; color: var(--text2);
+  font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.cmp-player-col { text-align: center; }
+.cmp-score { font-family: 'Bebas Neue'; font-size: 30px; line-height: 1; }
+.cmp-name { font-weight: 700; font-size: 13px; margin-top: 4px; }
+.cmp-sub { font-size: 10px; color: var(--text2); }
+.cmp-row {
+  display: grid; align-items: center; padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.cmp-label { font-size: 11px; color: var(--text2); }
+.cmp-val { text-align: center; font-size: 13px; }
+.cmp-bar-track { height: 5px; border-radius: 3px; background: rgba(255,255,255,.08); overflow: hidden; margin: 2px auto; max-width: 80px; }
+.cmp-bar-fill { height: 100%; border-radius: 3px; }
+.cmp-edge-box {
+  margin-top: 14px; padding: 12px 14px; border-radius: 10px;
+  background: rgba(245,166,35,.08); border: 1px solid rgba(245,166,35,.3);
+}
+.cmp-edge-title { font-family: 'Bebas Neue'; font-size: 13px; color: var(--gold); letter-spacing: .5px; margin-bottom: 6px; }
+.cmp-edge-text { font-size: 13px; color: var(--text1); line-height: 1.6; }
+
+/* ── CONNECTING ── */
+#connecting {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--bg);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 14px; padding: 32px; text-align: center;
+}
+#connecting h2 { font-family:'Bebas Neue'; font-size: 30px; color: var(--gold); }
+#connecting p { color: var(--text2); font-size: 13px; line-height: 1.6; }
+.dots { display: flex; gap: 8px; }
+.dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--gold);
+  animation: dp 1.2s ease-in-out infinite; }
+.dots span:nth-child(2){animation-delay:.2s} .dots span:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{transform:scale(.4);opacity:.3}40%{transform:scale(1);opacity:1}}
+
+/* ── BOTTOM TEAMS BAR ── */
+#teams-bar {
+  flex-shrink: 0;
+  background: rgba(5,13,26,0.97);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+  padding: 8px 10px env(safe-area-inset-bottom, 10px);
+  z-index: 50;
+}
+#teams-bar-label {
+  font-size: 9px; letter-spacing: 1.5px; color: var(--text2);
+  text-transform: uppercase; margin-bottom: 6px; padding: 0 2px;
+}
+#teams-scroll {
+  display: flex; gap: 6px;
+  overflow-x: auto; padding-bottom: 2px;
+  scrollbar-width: none;
+}
+#teams-scroll::-webkit-scrollbar { display: none; }
+.team-pill {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 58px; flex-shrink: 0;
+  padding: 6px 8px; border-radius: 10px;
+  border: 1.5px solid transparent;
+  background: var(--card);
+  cursor: pointer; user-select: none;
+  transition: all .15s;
+}
+.team-pill.on-clock {
+  border-color: var(--blue);
+  background: rgba(37,99,235,0.15);
+}
+.team-pill-swatch { width: 30px; height: 4px; border-radius: 2px; margin-bottom: 5px; }
+.team-pill-name {
+  font-family: 'Bebas Neue'; font-size: 12px; line-height: 1;
+  text-align: center; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+  max-width: 60px;
+}
+.team-pill-count { font-size: 9px; color: var(--text2); margin-top: 2px; font-weight: 600; }
+
+/* ── ROSTER SHEET ── */
+#roster-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+  background: #0a1a30;
+  border-top: 1px solid rgba(59,130,246,.3);
+  border-radius: 18px 18px 0 0;
+  padding: 14px 14px 18px;
+  max-height: 60dvh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.34,1.2,.64,1);
+}
+#roster-sheet.open { transform: translateY(0); }
+#roster-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+#roster-title { font-family: 'Bebas Neue'; font-size: 20px; }
+#roster-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; cursor: pointer; color: var(--text2);
+}
+.rrow {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 7px; font-size: 13px;
+  background: rgba(255,255,255,0.04); margin-bottom: 3px;
+}
+.rnum { color: var(--text2); font-size: 11px; min-width: 22px; }
+.rname { flex: 1; font-weight: 600; }
+.rpos { font-size: 10px; color: var(--text2); }
+.rempty {
+  padding: 7px 10px; border-radius: 7px; font-size: 11px;
+  color: rgba(255,255,255,.2); border: 1px dashed rgba(255,255,255,.1);
+  text-align: center; margin-bottom: 3px;
+}
+
+/* ── PICK BANNER ── */
+#banner {
+  position: fixed;
+  bottom: 10px;
+  left: 12px; right: 12px; z-index: 75;
+  background: linear-gradient(135deg, #1a3cba, #2563eb);
+  border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 6px 28px rgba(37,99,235,.55);
+  transform: translateY(calc(100% + 110px));
+  transition: transform .45s cubic-bezier(.34,1.4,.64,1);
+  cursor: pointer;
+}
+#banner.show { transform: translateY(0); }
+#banner-pick { font-family:'Bebas Neue'; font-size:11px; letter-spacing:1.5px; color:rgba(255,255,255,.6); }
+#banner-name { font-family:'Bebas Neue'; font-size:22px; line-height:1.1; }
+#banner-team { font-size:11px; color:rgba(255,255,255,.7); margin-top:1px; }
+#banner-x { font-size:18px; opacity:.4; padding:4px; margin-left:auto; }
+
+/* backdrop */
+#backdrop { display:none; position:fixed; inset:0; z-index:55; background:rgba(0,0,0,.45); }
+#backdrop.show { display:block; }
+
+/* countdown */
+.cblock { display:flex;flex-direction:column;align-items:center;gap:4px; }
+.cnum {
+  font-family:'Bebas Neue'; font-size:52px; line-height:1;
+  color:var(--text1);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 14px;
+  min-width: 72px; text-align:center;
+}
+.clabel { font-size:9px;letter-spacing:2px;color:var(--text2);text-transform:uppercase; }
+.csep { font-family:'Bebas Neue'; font-size:44px; color:var(--text2); line-height:1; padding-top:6px; }
+</style>
+</head>
+<body>
+
+<!-- Connecting screen -->
+<div id="compare-sheet" onclick="if(event.target===this)closeCompare()">
+  <div id="compare-inner">
+    <div id="compare-inner-hdr">
+      <div id="compare-title">⚔ COMPARISON</div>
+      <button id="compare-close-btn" onclick="closeCompare()">✕</button>
+    </div>
+    <div id="compare-content"></div>
+  </div>
+</div>
+
+<div id="connecting">
+  <img id="conn-logo" src="logo.svg" alt="LYBS"
+    style="width:min(280px,72vw);height:auto;mix-blend-mode:screen;
+    filter:drop-shadow(0 0 40px rgba(26,86,219,0.9)) drop-shadow(0 0 80px rgba(26,86,219,0.4));
+    display:block;margin:0 auto 28px;">
+
+  <div id="conn-countdown-wrap">
+    <div id="conn-status-line" style="font-size:12px;letter-spacing:1.5px;color:var(--text2);text-transform:uppercase;margin-bottom:16px;">Draft begins in</div>
+    <div id="conn-countdown" style="display:flex;gap:14px;justify-content:center;margin-bottom:20px;">
+      <div class="cblock"><div class="cnum" id="cd-h">00</div><div class="clabel">HRS</div></div>
+      <div class="csep">:</div>
+      <div class="cblock"><div class="cnum" id="cd-m">00</div><div class="clabel">MIN</div></div>
+      <div class="csep">:</div>
+      <div class="cblock"><div class="cnum" id="cd-s">00</div><div class="clabel">SEC</div></div>
+    </div>
+    <div id="conn-date-line" style="font-size:12px;color:var(--text2);">Majors Draft · Monday March 23 · 7:15 PM</div>
+  </div>
+
+  <div id="conn-connecting-wrap" style="display:none;margin-top:8px;">
+    <div class="dots"><span></span><span></span><span></span></div>
+    <p style="color:var(--text2);font-size:13px;margin-top:12px;">Connecting to draft…</p>
+  </div>
+
+  <p style="font-size:11px;color:rgba(255,255,255,.18);margin-top:24px;line-height:1.7;text-align:center;max-width:260px;">
+    Keep this page open. It will update automatically when the draft starts.
+  </p>
+</div>
+  <p style="font-size:11px;color:rgba(255,255,255,.18);margin-top:6px;">Keep this page open — it updates live.</p>
+</div>
+
+<!-- Sticky header -->
+<div id="hdr">
+  <div id="hdr-left">
+    <div id="hdr-round">ON THE CLOCK</div>
+    <div id="hdr-team">—</div>
+  </div>
+  <div id="hdr-right">
+    <div id="hdr-pick"></div>
+    <div id="hdr-runtime"></div>
+  </div>
+  <div id="hdr-dot"></div>
+</div>
+
+<!-- Compare bar — between header and scroll -->
+<div id="compare-bar">
+  <div id="compare-names"></div>
+  <button id="compare-go" onclick="openCompare()">⚔ Compare</button>
+  <button id="compare-clear" onclick="clearCompare()">✕</button>
+</div>
+
+<!-- Main scroll: available players -->
+<div id="scroll-area">
+  <div id="search-wrap">
+    <input id="search" type="search" placeholder="Search available players…"
+      oninput="onSearch(this.value)" autocomplete="off" spellcheck="false">
+  </div>
+  <div id="avail-count"></div>
+  <div id="player-list"></div>
+</div>
+
+<!-- Bottom bar: team pills -->
+<div id="teams-bar">
+  <div id="teams-bar-label">Teams · tap to view picks</div>
+  <div id="teams-scroll" id="teams-scroll"></div>
+</div>
+
+<!-- Roster slide-up -->
+<div id="backdrop" onclick="closeRoster()"></div>
+<div id="roster-sheet">
+  <div id="roster-hdr">
+    <div id="roster-title">—</div>
+    <div id="roster-close" onclick="closeRoster()">✕</div>
+  </div>
+  <div id="roster-list"></div>
+</div>
+
+<!-- Pick banner -->
+<div id="banner" onclick="dismissBanner()">
+  <div>
+    <div id="banner-pick">PICK IS IN</div>
+    <div id="banner-name"></div>
+    <div id="banner-team"></div>
+  </div>
+  <div id="banner-x">✕</div>
+</div>
+
+<script>
+// ── Transport: SSE from relay (cross-device) or BroadcastChannel (same device) ──
+const _IS_RELAY = (location.hostname !== 'localhost' && location.port === '3001')
+               || location.port === '3001';
+let _source = null;
+
+function _connectTransport() {
+  if (_IS_RELAY || location.port === '3001') {
+    // Served from relay server — use SSE
+    _source = new EventSource('/events');
+    _source.addEventListener('state', e => applyState(JSON.parse(e.data)));
+    _source.addEventListener('pick',  e => {
+      const d = JSON.parse(e.data);
+      showBanner(d.pick, d.state);
+      setTimeout(() => applyState(d.state), 5000);
+    });
+    _source.onerror = () => {};
+  } else {
+    // Accessed directly (same device as draft) — use BroadcastChannel
+    const bc = new BroadcastChannel('lybs_draft_tv');
+    bc.onmessage = e => {
+      const d = e.data;
+      if (d.type === 'draft_state') applyState(d.state);
+      if (d.type === 'draft_pick') { showBanner(d.pick, d.state); setTimeout(() => applyState(d.state), 5000); }
+      if (d.type === 'ping') bc.postMessage({ type: 'pong' });
+    };
+    setTimeout(() => bc.postMessage({ type: 'request_state' }), 500);
+    const _req = setInterval(() => { if (_state) clearInterval(_req); else bc.postMessage({ type: 'request_state' }); }, 8000);
+  }
+}
+_connectTransport();
+const _bc_compat = null; // legacy ref kept for safety
+let _state = null;
+let _filter = '';
+let _compareSet = new Set();
+let _draftStart = null;
+let _bannerTimer = null;
+let _rosterIdx = null;
+
+// Runtime
+function startRuntime() {
+  if (_draftStart) return;
+  _draftStart = Date.now();
+  setInterval(() => {
+    if (!_draftStart) return;
+    const s = Math.floor((Date.now() - _draftStart) / 1000);
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
+    document.getElementById('hdr-runtime').textContent = h > 0
+      ? `${h}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`
+      : `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  }, 1000);
+}
+
+// Search
+function onSearch(q) {
+  _filter = q.toLowerCase().trim();
+  if (_state) renderPlayers(_state);
+}
+
+// Roster sheet
+function openRoster(idx) {
+  if (!_state) return;
+  _rosterIdx = idx;
+  const { teams = [], players = [], pickHistory = [] } = _state;
+  const team = teams[idx];
+  if (!team) return;
+  const picks = pickHistory.filter(p => p.teamIdx === idx);
+  const max = team.maxPlayers || 10;
+
+  document.getElementById('roster-title').textContent = team.name;
+  document.getElementById('roster-title').style.color = team.color || 'var(--text1)';
+
+  let html = '';
+  picks.forEach((ph, i) => {
+    const p = players.find(x => x.key === ph.playerKey);
+    const name = p ? `${p.first} ${p.last}` : (ph.playerKey || '—');
+    const pos = p ? (p.positions || []).slice(0, 3).join(' · ') : '';
+    html += `<div class="rrow"><span class="rnum">#${i+1}</span><span class="rname">${name}</span>${pos?`<span class="rpos">${pos}</span>`:''}</div>`;
+  });
+  const empty = Math.max(0, max - picks.length);
+  for (let i = 0; i < empty; i++) {
+    html += `<div class="rempty">Pick ${picks.length + i + 1}</div>`;
+  }
+  document.getElementById('roster-list').innerHTML = html || '<div class="rempty">No picks yet</div>';
+  document.getElementById('roster-sheet').classList.add('open');
+  document.getElementById('backdrop').classList.add('show');
+}
+
+function closeRoster() {
+  document.getElementById('roster-sheet').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+  _rosterIdx = null;
+}
+
+// Banner
+function dismissBanner() {
+  document.getElementById('banner').classList.remove('show');
+  clearTimeout(_bannerTimer);
+}
+function showBanner(pick, state) {
+  if (!pick) return;
+  const teams = state?.teams || [];
+  const tn = (pick.teamIdx != null && teams[pick.teamIdx]) ? teams[pick.teamIdx].name : '';
+  document.getElementById('banner-name').textContent = `${pick.first} ${pick.last}`;
+  document.getElementById('banner-team').textContent = tn ? `→ ${tn}` : '';
+  clearTimeout(_bannerTimer);
+  document.getElementById('banner').classList.add('show');
+  _bannerTimer = setTimeout(dismissBanner, 9000);
+}
+
+// Renders
+function renderHeader(state) {
+  const { teams = [], draftOrder = [], currentPickIdx = 0 } = state;
+  const pe = draftOrder[currentPickIdx];
+  const tidx = pe?.teamIdx ?? pe;
+  const team = (tidx != null && teams[tidx]) ? teams[tidx] : null;
+  const round = pe?.round ?? Math.floor(currentPickIdx / Math.max(teams.length, 1)) + 1;
+
+  document.getElementById('hdr-team').textContent = team ? team.name : '—';
+  document.getElementById('hdr-team').style.color = team?.color || 'var(--gold)';
+  document.getElementById('hdr-round').textContent = `ROUND ${round} · ON THE CLOCK`;
+  document.getElementById('hdr-pick').textContent = `Pick #${currentPickIdx + 1}`;
+}
+
+function renderPlayers(state) {
+  const { players = [], pickHistory = [] } = state;
+  const taken = new Set(pickHistory.map(p => p.playerKey));
+  const avail = players.filter(p => !taken.has(p.key));
+  const shown = _filter
+    ? avail.filter(p => `${p.first} ${p.last} ${p.city || ''}`.toLowerCase().includes(_filter))
+    : avail;
+
+  document.getElementById('avail-count').textContent =
+    `${shown.length} player${shown.length !== 1 ? 's' : ''} available`;
+
+  document.getElementById('player-list').innerHTML = shown.slice(0, 200).map(p => {
+    const badges = (p.positions || []).slice(0, 3).map(x => `<span class="pbadge">${x}</span>`).join('');
+    const inCmp = _compareSet.has(p.key);
+    return `<div class="prow">
+      <div class="prow-info">
+        <div class="prow-name">${p.first} ${p.last}</div>
+        ${p.city ? `<div class="prow-city">${p.city}</div>` : ''}
+        ${badges ? `<div class="prow-badges">${badges}</div>` : ''}
+      </div>
+      <button class="cmp-btn${inCmp ? ' cmp-btn-on' : ''}" onclick="toggleCompare('${p.key}')" data-key="${p.key}">
+        ${inCmp ? '✓' : '⚔'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ── Compare ──────────────────────────────────────────────────
+function toggleCompare(key) {
+  if (_compareSet.has(key)) {
+    _compareSet.delete(key);
+  } else {
+    if (_compareSet.size >= 4) {
+      const first = [..._compareSet][0];
+      _compareSet.delete(first);
+    }
+    _compareSet.add(key);
+  }
+  _updateCompareBar();
+  // Refresh button states without full re-render
+  document.querySelectorAll('.cmp-btn').forEach(btn => {
+    const k = btn.getAttribute('data-key');
+    const on = _compareSet.has(k);
+    btn.textContent = on ? '✓' : '⚔';
+    btn.className = 'cmp-btn' + (on ? ' cmp-btn-on' : '');
+  });
+}
+
+function _updateCompareBar() {
+  const bar = document.getElementById('compare-bar');
+  const namesEl = document.getElementById('compare-names');
+  if (!bar || !namesEl || !_state) return;
+  if (_compareSet.size < 2) {
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'flex';
+  const players = [..._compareSet].map(k => (_state.players || []).find(p => p.key === k)).filter(Boolean);
+  namesEl.innerHTML = players.map(p => `<span class="cname-tag">${p.first} ${p.last}</span>`).join('');
+}
+
+function clearCompare() {
+  _compareSet.clear();
+  _updateCompareBar();
+  document.querySelectorAll('.cmp-btn').forEach(btn => {
+    btn.textContent = '⚔'; btn.className = 'cmp-btn';
+  });
+}
+
+function openCompare() {
+  if (!_state || _compareSet.size < 2) return;
+  const pObjs = [..._compareSet].map(k => (_state.players || []).find(p => p.key === k)).filter(Boolean);
+  const el = document.getElementById('compare-content');
+  if (!el) return;
+
+  const numCols = pObjs.length;
+  const colW = `${Math.floor(100 / numCols)}%`;
+  const gridCols = `120px ${pObjs.map(() => colW).join(' ')}`;
+
+  // Gather evals from localStorage (same logic as desktop draft.js)
+  const pData = pObjs.map(p => {
+    let evalScore = 0, cats = [];
+    try {
+      const keys = ['lll_evals'];
+      for (const k of keys) {
+        const sessions = JSON.parse(localStorage.getItem(k) || '[]');
+        for (const s of sessions.filter(s => s.sport === p.sport).sort((a,b) => new Date(b.date)-new Date(a.date))) {
+          const sp = (s.players||[]).find(ep =>
+            ep.first?.toLowerCase() === p.first?.toLowerCase() &&
+            ep.last?.[0]?.toUpperCase() === p.last?.[0]?.toUpperCase()
+          );
+          if (!sp) continue;
+          const dg = sp.dayGrades || {};
+          const lg = sp.grades || {};
+          if (Object.values(dg).filter(v=>v>0).length >= 2) {
+            cats = [
+              {label:'Hitting', icon:'⚾', val:dg.hitting||0},
+              {label:'Fielding', icon:'🧤', val:dg.grounders||dg.catch||0},
+              {label:'Throwing', icon:'💪', val:dg.throwing||0},
+              {label:'Speed', icon:'⚡', val:dg.speed||0},
+              {label:'Coachable', icon:'🧠', val:dg.coachability||0},
+            ].filter(c=>c.val>0);
+            break;
+          }
+          if (Object.values(lg).filter(v=>v>0).length >= 2) {
+            cats = [
+              {label:'Hitting', icon:'⚾', val:lg.hitting?Math.round(lg.hitting/2):0},
+              {label:'Fielding', icon:'🧤', val:lg.fielding?Math.round(lg.fielding/2):0},
+              {label:'Pitching', icon:'💪', val:lg.pitching?Math.round(lg.pitching/2):0},
+              {label:'Speed', icon:'⚡', val:lg.speed?Math.round(lg.speed/2):0},
+              {label:'Arm', icon:'🎯', val:lg.arm?Math.round(lg.arm/2):0},
+            ].filter(c=>c.val>0);
+            break;
+          }
+        }
+        if (cats.length) break;
+      }
+    } catch(e) {}
+    return { p, evalScore, cats };
+  });
+
+  // Header row
+  let html = `<div style="display:grid;grid-template-columns:${gridCols};gap:0;margin-bottom:0;">
+    <div></div>
+    ${pData.map(d => `<div class="cmp-player-col" style="padding:10px 6px;background:rgba(255,255,255,.03);border-bottom:2px solid var(--border);border-radius:8px 8px 0 0;margin:0 3px;">
+      <div class="cmp-name">${d.p.first} ${d.p.last}</div>
+      <div class="cmp-sub">${d.p.city || ''} · ${d.p.division || ''}</div>
+    </div>`).join('')}
+  </div>`;
+
+  // Skill rows
+  const allCats = [...new Set(pData.flatMap(d => d.cats.map(c => c.label)))];
+  if (allCats.length) {
+    html += `<div style="font-size:10px;letter-spacing:1px;color:var(--text2);text-transform:uppercase;padding:10px 0 4px;">Eval Skills</div>`;
+    allCats.forEach(label => {
+      const vals = pData.map(d => d.cats.find(c => c.label === label)?.val || 0);
+      const icon = pData.flatMap(d => d.cats).find(c => c.label === label)?.icon || '';
+      const maxVal = Math.max(...vals);
+      html += `<div class="cmp-row" style="grid-template-columns:${gridCols};">
+        <div class="cmp-label">${icon} ${label}</div>
+        ${vals.map(v => {
+          const isTop = v === maxVal && maxVal > 0;
+          const col = v>=4?'#10b981':v>=3?'#60a5fa':v>=2?'#f5a623':v>0?'#ef4444':'rgba(255,255,255,.1)';
+          return `<div class="cmp-val">
+            <div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${v?v/5*100:0}%;background:${col};"></div></div>
+            <div style="font-size:12px;font-weight:${isTop?700:400};color:${isTop?col:'var(--text2)'};">${v||'—'}${isTop&&maxVal>0?' ▲':''}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    });
+  }
+
+  // Experience rows
+  html += `<div style="font-size:10px;letter-spacing:1px;color:var(--text2);text-transform:uppercase;padding:10px 0 4px;border-top:1px solid var(--border);">Experience</div>`;
+  const expRows = [
+    { label: 'Years', vals: pData.map(d => d.p.yearsInLeague || 0), higher: true, fmt: v => v || '—' },
+    { label: 'Division', vals: pData.map(d => d.p.division || '—'), higher: false, fmt: v => v },
+    { label: 'Pitching', vals: pData.map(d => d.p.pitching ? 1 : 0), higher: true, fmt: (v,d) => d.p.pitching ? '⚾ Yes' : '—' },
+    { label: 'Catching', vals: pData.map(d => d.p.catching ? 1 : 0), higher: true, fmt: (v,d) => d.p.catching ? '🎯 Yes' : '—' },
+  ];
+  expRows.forEach(row => {
+    const numVals = row.vals.map(v => typeof v === 'number' ? v : 0);
+    const best = row.higher ? Math.max(...numVals) : null;
+    html += `<div class="cmp-row" style="grid-template-columns:${gridCols};">
+      <div class="cmp-label">${row.label}</div>
+      ${pData.map((d,i) => {
+        const isTop = row.higher && typeof row.vals[i] === 'number' && row.vals[i] > 0 && row.vals[i] === best;
+        return `<div class="cmp-val" style="color:${isTop?'#10b981':'var(--text2)'};">${row.fmt(row.vals[i], d)}</div>`;
+      }).join('')}
+    </div>`;
+  });
+
+  // Positions
+  if (pData.some(d => d.p.positions?.length)) {
+    html += `<div class="cmp-row" style="grid-template-columns:${gridCols};">
+      <div class="cmp-label">Positions</div>
+      ${pData.map(d => `<div class="cmp-val" style="font-size:10px;">${(d.p.positions||[]).join(', ')||'—'}</div>`).join('')}
+    </div>`;
+  }
+
+  // GC Stats section
+  const statRows = [
+    { label: '⚾ AVG',  vals: pData.map(d => d.p.statAVG || null),  higher: true,  fmt: v => v || '—' },
+    { label: '🏃 OPS',  vals: pData.map(d => d.p.statH10 ? null : null).map((_,i) => {
+        const p = pData[i].p; const r = p.statAVG ? p : null;
+        return null; // OPS not in state — use statH10 proxy
+      }), higher: true, fmt: v => v || '—' },
+    { label: '🎯 H/10', vals: pData.map(d => d.p.statH10 || null),  higher: true,  fmt: v => v || '—' },
+    { label: '🏅 RBI',  vals: pData.map(d => d.p.statRBI ? parseInt(d.p.statRBI) : null), higher: true, fmt: v => v ?? '—' },
+    { label: '💨 SB',   vals: pData.map(d => d.p.statSB  ? parseInt(d.p.statSB)  : null), higher: true, fmt: v => v ?? '—' },
+    { label: '🌀 ERA',  vals: pData.map(d => d.p.statERA ? parseFloat(d.p.statERA) : null), higher: false, fmt: v => v != null ? v.toFixed(2) : '—' },
+  ].filter(row => pData.some((d, i) => row.vals[i] != null));
+
+  if (statRows.length) {
+    html += `<div style="font-size:10px;letter-spacing:1px;color:var(--text2);text-transform:uppercase;padding:10px 0 4px;border-top:1px solid var(--border);">Last Season Stats</div>`;
+    statRows.forEach(row => {
+      const numVals = row.vals.map(v => v != null ? parseFloat(v) : null);
+      const valid = numVals.filter(v => v != null);
+      const best = valid.length ? (row.higher ? Math.max(...valid) : Math.min(...valid)) : null;
+      html += `<div class="cmp-row" style="grid-template-columns:${gridCols};">
+        <div class="cmp-label">${row.label}</div>
+        ${pData.map((d, i) => {
+          const v = row.vals[i];
+          const isTop = v != null && best != null && parseFloat(v) === best && valid.length > 1;
+          return `<div class="cmp-val" style="color:${isTop ? '#10b981' : 'var(--text2)'}; font-weight:${isTop ? 700 : 400};">${row.fmt(v, d)}${isTop ? ' ▲' : ''}</div>`;
+        }).join('')}
+      </div>`;
+    });
+  }
+
+  el.innerHTML = html;
+  document.getElementById('compare-sheet').classList.add('open');
+}
+
+function closeCompare() {
+  document.getElementById('compare-sheet').classList.remove('open');
+}
+
+function renderTeams(state) {
+  const { teams = [], draftOrder = [], currentPickIdx = 0, pickHistory = [] } = state;
+  const pe = draftOrder[currentPickIdx];
+  const clockIdx = pe?.teamIdx ?? pe;
+  const counts = {};
+  pickHistory.forEach(p => { counts[p.teamIdx] = (counts[p.teamIdx] || 0) + 1; });
+
+  document.getElementById('teams-scroll').innerHTML = teams.map((t, i) => {
+    const c = counts[i] || 0;
+    const max = t.maxPlayers || 10;
+    const otc = i === clockIdx;
+    return `<div class="team-pill${otc ? ' on-clock' : ''}" onclick="openRoster(${i})">
+      <div class="team-pill-swatch" style="background:${t.color || '#3b82f6'}"></div>
+      <div class="team-pill-name" style="color:${t.color || 'var(--text1)'}">${t.name}</div>
+      <div class="team-pill-count">${c}/${max}</div>
+    </div>`;
+  }).join('');
+
+  if (_rosterIdx !== null) openRoster(_rosterIdx);
+}
+
+function applyState(state) {
+  _state = state;
+  document.getElementById('connecting').style.display = 'none';
+  document.getElementById('hdr-dot').classList.add('live');
+  startRuntime();
+  renderHeader(state);
+  renderPlayers(state);
+  renderTeams(state);
+}
+
+
+// ── Countdown ───────────────────────────────────────────────
+// Monday March 23 2026 7:15 PM Eastern (EST = UTC-5)
+const DRAFT_TIME = new Date('2026-03-23T19:15:00-05:00').getTime();
+
+function updateCountdown() {
+  const now = Date.now();
+  const diff = DRAFT_TIME - now;
+  const cdWrap = document.getElementById('conn-countdown-wrap');
+  const connWrap = document.getElementById('conn-connecting-wrap');
+  const statusLine = document.getElementById('conn-status-line');
+
+  if (diff <= 0) {
+    // Draft time has passed — show connecting dots
+    if (cdWrap) cdWrap.style.display = 'none';
+    if (connWrap) connWrap.style.display = 'flex';
+    if (connWrap) connWrap.style.flexDirection = 'column';
+    if (connWrap) connWrap.style.alignItems = 'center';
+    if (statusLine) statusLine.style.display = 'none';
+    return;
+  }
+
+  const totalSec = Math.floor(diff / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+
+  const el = id => document.getElementById(id);
+  if (el('cd-h')) el('cd-h').textContent = String(h).padStart(2,'0');
+  if (el('cd-m')) el('cd-m').textContent = String(m).padStart(2,'0');
+  if (el('cd-s')) el('cd-s').textContent = String(s).padStart(2,'0');
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+bc.onmessage = e => {
+  const d = e.data;
+  if (d.type === 'draft_state') applyState(d.state);
+  if (d.type === 'draft_pick') {
+    showBanner(d.pick, d.state);
+    setTimeout(() => applyState(d.state), 5000);
+  }
+  if (d.type === 'ping') bc.postMessage({ type: 'pong' });
+};
+
+setTimeout(() => bc.postMessage({ type: 'request_state' }), 500);
+const _req = setInterval(() => {
+  if (_state) clearInterval(_req);
+  else bc.postMessage({ type: 'request_state' });
+}, 8000);
+</script>
+</body>
+</html>

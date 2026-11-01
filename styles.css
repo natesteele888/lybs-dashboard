@@ -1,0 +1,2256 @@
+  :root {
+    --navy: #0a1628;
+    --navy2: #0d1f3c;
+    --navy3: #162847;
+    --blue: #1a56db;
+    --blue2: #2563eb;
+    --gold: #f5a623;
+    --gold2: #fbbf24;
+    --green: #10b981;
+    --red: #ef4444;
+    --orange: #f97316;
+    --tball: #8b5cf6;
+    --baseball: #2563eb;
+    --softball: #ec4899;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --border: rgba(255,255,255,0.08);
+    --card: rgba(255,255,255,0.04);
+    --card2: rgba(255,255,255,0.07);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* background texture */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background: radial-gradient(ellipse 80% 60% at 20% 0%, rgba(26,86,219,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 100%, rgba(245,166,35,0.07) 0%, transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+
+  .wrap { position:relative; z-index:1; max-width:1400px; margin:0 auto; padding:0 24px 48px; }
+
+  /* ─── HEADER ─── */
+  .header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 28px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    gap:16px; flex-wrap:wrap;
+  }
+  .header-left { display:flex; align-items:center; gap:16px; }
+  .logo-img {
+    height:54px; width:auto; flex-shrink:0;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 2px 12px rgba(26,86,219,0.5));
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .header h1 {
+    font-family:'Bebas Neue'; font-size:clamp(22px,3vw,34px);
+    letter-spacing:2px; color:#fff; line-height:1;
+  }
+  .header h1 span { color: var(--blue2); }
+  .header-sub { font-size:13px; color:var(--text2); margin-top:3px; }
+  .header-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .header-extra { /* visible on desktop, hidden on mobile via media query */ }
+  .header-overflow-btn { display:none; } /* shown only on mobile */
+  .header-overflow-menu {
+    position:absolute; top:100%; right:0; z-index:500;
+    background:var(--navy2); border:1px solid var(--border);
+    border-radius:10px; padding:8px; min-width:200px;
+    display:flex; flex-direction:column; gap:6px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .header { position:relative; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600;
+    cursor:pointer; border:none; transition:all .18s; display:inline-flex;
+    align-items:center; gap:6px; font-family:'DM Sans';
+  }
+  .btn-primary { background:var(--blue2); color:#fff; }
+  .btn-primary:hover { background:#1d4ed8; transform:translateY(-1px); }
+  .btn-gold { background:var(--gold); color:var(--navy); }
+  .btn-gold:hover { background:var(--gold2); transform:translateY(-1px); }
+  .btn-ghost {
+    background:transparent; color:var(--text2);
+    border:1px solid var(--border);
+  }
+  .btn-ghost:hover { background:var(--card2); color:var(--text); }
+  .btn-sm { padding:6px 12px; font-size:12px; }
+  .btn-danger { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+  .btn-danger:hover { background:rgba(239,68,68,0.25); }
+
+  /* ─── TABS ─── */
+  /* ── Two-row grouped nav ── */
+  /* ── NAV ── */
+
+  /* Mode bar — 2 big segmented tabs */
+  #mainNav {
+    margin-bottom: 0;
+  }
+
+  .nav-mode-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding: 5px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .nav-mode-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Bebas Neue';
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--text2);
+    background: transparent;
+    transition: all .18s;
+    user-select: none;
+  }
+  .nav-mode-btn:hover:not(.active) {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+  .nav-mode-btn .nav-mode-icon { font-size: 18px; line-height: 1; }
+
+  /* League mode active = blue */
+  #modeBtn-league.active {
+    background: var(--blue2);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(37,99,235,0.4);
+    font-weight: 900;
+  }
+  /* Coaches mode active = gold */
+  #modeBtn-coaches.active {
+    background: var(--gold);
+    color: var(--navy);
+    box-shadow: 0 2px 12px rgba(245,166,35,0.4);
+    font-weight: 900;
+  }
+
+  /* Pill row */
+  .nav-pills {
+    display: flex;
+    gap: 5px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 2px 10px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .nav-pills::-webkit-scrollbar { display: none; }
+
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 99px;
+    border: 1.5px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text2);
+    font-family: 'DM Sans';
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all .15s;
+    scroll-snap-align: start;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-pill:hover:not(.active) {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .nav-pill.active {
+    background: rgba(37,99,235,0.18);
+    color: #93c5fd;
+    border-color: rgba(37,99,235,0.45);
+    font-weight: 700;
+  }
+  /* Coaches pills active = gold */
+  #navpills-coaches .nav-pill.active {
+    background: rgba(245,166,35,0.15);
+    color: var(--gold);
+    border-color: rgba(245,166,35,0.45);
+  }
+  .nav-pill.draft-pill.active {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+
+  /* Legacy .tab class — keep for any inline references */
+  .tab {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: none; background: transparent;
+    color: var(--text2); transition: all .15s; font-family: 'DM Sans'; white-space: nowrap;
+  }
+  .tab.active { background: var(--blue2); color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,0.35); }
+  .tab.active.draft-tab { background: var(--gold); color: var(--navy); }
+  .tab:hover:not(.active) { background: var(--card2); color: var(--text); }
+
+  @media (max-width: 480px) {
+    .nav-mode-btn { font-size: 15px; padding: 10px 8px; }
+    .nav-mode-btn .nav-mode-icon { font-size: 15px; }
+    .nav-pill { font-size: 11px; padding: 6px 11px; }
+  }
+
+    /* ─── SECTION ─── */
+  .section { display:none; }
+  .section.active { display:block; }
+
+  /* ─── STAT CARDS ─── */
+  .stat-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+    gap:14px; margin-bottom:28px;
+  }
+  .stat-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:18px 20px;
+    transition: transform .18s, border-color .18s;
+    position:relative; overflow:hidden;
+  }
+  .stat-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    border-radius:12px 12px 0 0;
+  }
+  .stat-card.blue::before  { background:var(--baseball); }
+  .stat-card.pink::before  { background:var(--softball); }
+  .stat-card.purple::before { background:var(--tball); }
+  .stat-card.gold::before  { background:var(--gold); }
+  .stat-card.green::before { background:var(--green); }
+  .stat-card:hover { transform:translateY(-2px); border-color:rgba(255,255,255,0.14); }
+  .stat-label { font-size:12px; color:var(--text2); font-weight:500; text-transform:uppercase; letter-spacing:.5px; }
+  .stat-value { font-family:'Bebas Neue'; font-size:40px; line-height:1.1; margin:4px 0 2px; }
+  .stat-value.blue { color:var(--baseball); }
+  .stat-value.pink { color:var(--softball); }
+  .stat-value.purple { color:var(--tball); }
+  .stat-value.gold { color:var(--gold); }
+  .stat-value.green { color:var(--green); }
+  .stat-delta { font-size:12px; }
+  .delta-up { color:var(--green); }
+  .delta-down { color:var(--red); }
+  .delta-same { color:var(--text2); }
+
+  /* ─── GRID LAYOUTS ─── */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+  @media(max-width:900px) {
+    .two-col, .three-col { grid-template-columns:1fr; }
+  }
+  @media(max-width:600px) {
+    .two-col { grid-template-columns:1fr; }
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:20px; margin-bottom:16px;
+  }
+  .card-title {
+    font-family:'Bebas Neue'; font-size:20px; letter-spacing:1px;
+    color:#fff; margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .card-title span.accent { color:var(--gold); }
+  .card-title-sm { font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px; text-transform:uppercase; letter-spacing:.5px; }
+
+  /* ─── CHART CONTAINERS ─── */
+  .chart-wrap { position:relative; height:220px; }
+  .chart-wrap-lg { position:relative; height:300px; }
+  .chart-wrap-sm { position:relative; height:170px; }
+
+  /* ─── HEALTH METER ─── */
+  .health-bar-wrap { margin:8px 0 4px; }
+  .health-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; }
+  .health-label .hl-name { color:var(--text2); font-weight:500; }
+  .health-label .hl-pct { font-weight:700; }
+  .health-bar {
+    height:8px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;
+  }
+  .health-fill {
+    height:100%; border-radius:999px; transition: width 1s ease;
+  }
+  .fill-green { background: linear-gradient(90deg, var(--green), #34d399); }
+  .fill-gold { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+  .fill-red { background: linear-gradient(90deg, var(--red), #f87171); }
+  .fill-blue { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+
+  /* ─── TABLE ─── */
+  .tbl-wrap { overflow-x:auto; max-height:420px; overflow-y:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th {
+    background:rgba(255,255,255,0.06); padding:10px 12px;
+    text-align:left; font-size:11px; text-transform:uppercase;
+    letter-spacing:.5px; color:var(--text2); font-weight:600;
+    position:sticky; top:0; z-index:2;
+    cursor:pointer; user-select:none;
+  }
+  thead th:hover { color:var(--text); }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:hover { background:var(--card2); }
+  tbody td { padding:9px 12px; color:var(--text); }
+  .badge {
+    display:inline-block; padding:2px 8px; border-radius:999px;
+    font-size:11px; font-weight:600; white-space:nowrap;
+  }
+  .badge-baseball { background:rgba(37,99,235,0.2); color:#93c5fd; }
+  .badge-softball { background:rgba(236,72,153,0.2); color:#f9a8d4; }
+  .badge-tball { background:rgba(139,92,246,0.2); color:#c4b5fd; }
+  .badge-majors { background:rgba(245,166,35,0.18); color:#fcd34d; }
+  .badge-minors { background:rgba(16,185,129,0.18); color:#6ee7b7; }
+  .badge-rookies { background:rgba(249,115,22,0.18); color:#fdba74; }
+  .badge-senior { background:rgba(239,68,68,0.18); color:#fca5a5; }
+  .badge-farm { background:rgba(20,184,166,0.18); color:#99f6e4; }
+  .badge-unknown { background:rgba(100,116,139,0.18); color:#94a3b8; }
+  .badge-returning { background:rgba(16,185,129,0.18); color:#6ee7b7; }
+  .badge-new { background:rgba(96,165,250,0.18); color:#93c5fd; }
+
+  /* ─── FILTER BAR ─── */
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,0.7); z-index:1000;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--navy2); border:1px solid var(--border);
+    border-radius:16px; padding:28px; max-width:560px; width:100%;
+    max-height:90vh; overflow-y:auto;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  }
+  .modal-title { font-family:'Bebas Neue'; font-size:24px; margin-bottom:20px; color:#fff; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .form-group { display:flex; flex-direction:column; gap:5px; }
+  .form-group.full { grid-column:span 2; }
+  .form-group label { font-size:12px; color:var(--text2); font-weight:500; text-transform:uppercase; letter-spacing:.5px; }
+  .form-group input, .form-group select {
+    background:rgba(255,255,255,0.06); border:1px solid var(--border);
+    color:var(--text); padding:9px 12px; border-radius:8px;
+    font-size:13px; font-family:'DM Sans'; outline:none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color:var(--blue2); }
+  .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+
+  /* ─── RETENTION SCORE ─── */
+  .score-ring-wrap { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .score-ring {
+    width:100px; height:100px; border-radius:50%; position:relative;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .score-ring canvas { position:absolute; inset:0; }
+  .score-ring-inner {
+    font-family:'Bebas Neue'; font-size:28px; z-index:1;
+    text-align:center; line-height:1;
+  }
+  .score-ring-inner small { font-family:'DM Sans'; font-size:11px; color:var(--text2); display:block; margin-top:2px; }
+
+  /* ─── UPLOAD ZONE ─── */
+  .upload-zone {
+    border:2px dashed var(--border); border-radius:12px;
+    padding:32px; text-align:center; cursor:pointer;
+    transition:border-color .18s, background .18s;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color:var(--blue2); background:rgba(37,99,235,0.06);
+  }
+  .upload-icon { font-size:36px; margin-bottom:10px; }
+  .upload-text { font-size:14px; color:var(--text); font-weight:600; }
+  .upload-sub { font-size:12px; color:var(--text2); margin-top:4px; }
+  .upload-formats { display:flex; gap:6px; justify-content:center; margin-top:10px; }
+  .fmt-badge { background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:2px 8px; font-size:11px; color:var(--text2); }
+
+  /* ─── RETENTION TABLE ─── */
+  .ret-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .ret-table th {
+    padding:8px 12px; background:rgba(255,255,255,0.05);
+    text-align:left; font-size:11px; text-transform:uppercase;
+    color:var(--text2); letter-spacing:.5px;
+  }
+  .ret-table td { padding:9px 12px; border-bottom:1px solid var(--border); }
+  .ret-table tr:last-child td { border-bottom:none; }
+  .ret-num { font-family:'Bebas Neue'; font-size:22px; color:var(--gold); }
+  .ret-denom { color:var(--text2); font-size:12px; }
+
+  /* ─── PILL FILTER ─── */
+  .pill-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+  .pill {
+    padding:5px 14px; border-radius:999px; font-size:12px; font-weight:600;
+    cursor:pointer; border:1px solid var(--border); background:transparent;
+    color:var(--text2); transition:all .15s; font-family:'DM Sans';
+  }
+  .pill.active.all { background:var(--card2); color:var(--text); border-color:rgba(255,255,255,0.2); }
+  .pill.active.baseball { background:rgba(37,99,235,0.25); color:#93c5fd; border-color:var(--baseball); }
+  .pill.active.softball { background:rgba(236,72,153,0.25); color:#f9a8d4; border-color:var(--softball); }
+  .pill.active.tball { background:rgba(139,92,246,0.25); color:#c4b5fd; border-color:var(--tball); }
+  .pill:hover:not(.active) { border-color:rgba(255,255,255,0.2); color:var(--text); }
+
+  /* ─── ALLSTAR SECTION ─── */
+  .allstar-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:12px; }
+  .allstar-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:14px;
+  }
+  .allstar-division { font-size:11px; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+  .allstar-count { font-family:'Bebas Neue'; font-size:32px; color:var(--gold); }
+  .allstar-label { font-size:12px; color:var(--text2); }
+  .allstar-range { font-size:11px; color:rgba(255,255,255,0.3); margin-top:4px; }
+
+  /* ─── PROGRESS ─── */
+  .prog-compare { display:flex; flex-direction:column; gap:10px; }
+  .prog-row { display:grid; grid-template-columns:100px 1fr 48px; gap:10px; align-items:center; font-size:13px; }
+  .prog-row .pr-label { color:var(--text2); font-size:12px; text-align:right; }
+  .prog-track { background:rgba(255,255,255,0.07); border-radius:999px; height:10px; overflow:hidden; position:relative; }
+  .prog-fill-a { height:100%; border-radius:999px; position:absolute; top:0; left:0; opacity:0.6; }
+  .prog-fill-b { height:100%; border-radius:999px; position:absolute; top:0; left:0; }
+  .prog-val { text-align:right; font-weight:700; font-size:13px; }
+
+  /* ─── MISC ─── */
+  .divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
+  .empty { color:var(--text2); font-size:13px; text-align:center; padding:24px; }
+  .tag-list { display:flex; gap:6px; flex-wrap:wrap; }
+  .info-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .info-row:last-child { border-bottom:none; }
+  .info-row .ir-label { color:var(--text2); }
+  .info-row .ir-val { font-weight:600; }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position:fixed; bottom:24px; right:24px;
+    background:#1e293b; border:1px solid var(--border);
+    border-radius:10px; padding:12px 18px;
+    font-size:13px; z-index:9999; pointer-events:none;
+    opacity:0; transform:translateY(8px);
+    transition:opacity .3s, transform .3s;
+    box-shadow:0 8px 32px rgba(0,0,0,.4);
+  }
+  #toast.show { opacity:1; transform:translateY(0); }
+  #toast.success { border-color:rgba(16,185,129,.4); color:var(--green); }
+  #toast.error { border-color:rgba(239,68,68,.4); color:var(--red); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.22); }
+
+  /* ─── CLICKABLE STAT CARDS ─── */
+  .stat-clickable { cursor:pointer; }
+  .stat-clickable:hover { transform:translateY(-3px); border-color:rgba(255,255,255,0.2); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+  .stat-card-trend {
+    position:absolute; top:10px; right:10px;
+    font-size:14px; opacity:0.4;
+    transition: opacity .18s;
+  }
+  .stat-clickable:hover .stat-card-trend { opacity:0.9; }
+
+  /* ─── YOY SUB-TABS ─── */
+  .yoy-subtab-bar {
+    display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap;
+    padding:4px; background:rgba(255,255,255,0.04);
+    border-radius:10px; width:fit-content;
+  }
+  .yoy-sub-tab {
+    padding:7px 18px; border-radius:8px; font-size:12px; font-weight:600;
+    cursor:pointer; border:none; background:transparent;
+    color:var(--text2); transition:all .18s; font-family:'DM Sans';
+  }
+  .yoy-sub-tab.active { background:var(--blue2); color:#fff; }
+  .yoy-sub-tab:hover:not(.active) { background:var(--card2); color:var(--text); }
+
+  /* ─── STAT DETAIL CHART ─── */
+  .stat-detail-chart-wrap { position:relative; height:220px; margin-bottom:20px; }
+
+  /* ─── TEAM LINK ─── */
+  .team-link {
+    color:var(--gold); cursor:pointer; text-decoration:underline;
+    text-decoration-style:dotted; text-underline-offset:3px;
+    transition: color .15s;
+  }
+  .team-link:hover { color:var(--gold2); }
+
+  /* ─── TEAM MODAL ─── */
+  .team-modal-header { margin-bottom:16px; }
+  .team-name-edit {
+    display:flex; gap:10px; align-items:center; margin-bottom:16px;
+    padding:14px; background:rgba(255,255,255,0.04);
+    border:1px solid var(--border); border-radius:10px;
+  }
+  .team-name-edit input {
+    flex:1; background:rgba(255,255,255,0.07); border:1px solid var(--border);
+    color:var(--text); padding:8px 12px; border-radius:8px;
+    font-size:14px; font-family:'DM Sans'; font-weight:600; outline:none;
+  }
+  .team-name-edit input:focus { border-color:var(--blue2); }
+
+  /* ─── ALLSTAR CARD CLICKABLE ─── */
+  .allstar-card-clickable {
+    cursor:pointer; position:relative; transition:all .18s;
+  }
+  .allstar-card-clickable:hover {
+    transform:translateY(-3px); border-color:var(--gold);
+    box-shadow:0 8px 24px rgba(245,166,35,0.15);
+  }
+  .allstar-card-star-icon {
+    position:absolute; top:10px; right:10px;
+    font-size:16px; opacity:0.5; transition:opacity .18s;
+  }
+  .allstar-card-clickable:hover .allstar-card-star-icon { opacity:1; }
+
+  /* ─── DRAFT TAB BUTTON ─── */
+  .draft-tab {
+    background: linear-gradient(135deg, rgba(245,166,35,0.15), rgba(245,166,35,0.05)) !important;
+    border: 1px solid rgba(245,166,35,0.3) !important;
+    color: var(--gold) !important;
+  }
+  .draft-tab.active {
+    background: var(--gold) !important;
+    color: var(--navy) !important;
+    border-color: var(--gold) !important;
+  }
+
+  /* ─── DRAFT PHASE STEPPER ─── */
+  .draft-stepper {
+    display: flex; align-items: center; gap: 0;
+    padding: 16px 20px 20px; margin-bottom: 4px;
+  }
+  .draft-step {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    min-width: 64px;
+  }
+  .draft-step-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans'; font-weight: 700; font-size: 14px;
+    background: var(--card2); border: 2px solid var(--border);
+    color: var(--text2); transition: all .2s;
+  }
+  .draft-step.active .draft-step-dot {
+    background: var(--gold); border-color: var(--gold);
+    color: var(--navy); box-shadow: 0 0 16px rgba(245,166,35,.4);
+  }
+  .draft-step.done .draft-step-dot {
+    background: var(--green); border-color: var(--green);
+    color: #fff;
+  }
+  .draft-step-label {
+    font-size: 11px; color: var(--text2);
+    font-weight: 600; letter-spacing: .4px; white-space: nowrap;
+  }
+  .draft-step.active .draft-step-label { color: var(--gold); }
+  .draft-step.done .draft-step-label { color: var(--green); }
+  .draft-step-line {
+    flex: 1; height: 2px;
+    background: var(--border); margin-bottom: 20px;
+  }
+  .draft-step-line.active-line { background: var(--green); }
+
+  /* ─── DRAFT PHASE STEPPER ─── */
+  .draft-stepper {
+    display: flex; align-items: center; gap: 0;
+    padding: 16px 0 20px; margin-bottom: 4px;
+  }
+  .draft-step {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .draft-step-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    background: var(--card); border: 2px solid var(--border);
+    color: var(--text2); transition: all .2s;
+  }
+  .draft-step-label {
+    font-size: 10px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: .5px; font-weight: 600; white-space: nowrap;
+  }
+  .draft-step.active .draft-step-dot {
+    background: var(--gold); border-color: var(--gold);
+    color: var(--navy); box-shadow: 0 0 12px rgba(245,166,35,0.4);
+  }
+  .draft-step.active .draft-step-label { color: var(--gold); }
+  .draft-step.done .draft-step-dot {
+    background: var(--green); border-color: var(--green); color: #fff;
+  }
+  .draft-step.done .draft-step-label { color: var(--green); }
+  .draft-step-line {
+    flex: 1; height: 2px; background: var(--border); margin: 0 6px;
+    margin-bottom: 14px; /* offset for label below dot */
+  }
+  .draft-step-line.active-line { background: var(--green); }
+
+  /* ─── DRAFT PHASE STEPPER ─── */
+  .draft-stepper {
+    display: flex; align-items: center; gap: 0;
+    padding: 16px 4px 20px;
+  }
+  .draft-step {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .draft-step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans'; font-size: 12px; font-weight: 700;
+    background: var(--navy3); border: 2px solid var(--border); color: var(--text2);
+    transition: all .2s;
+  }
+  .draft-step.active .draft-step-dot {
+    background: var(--gold); border-color: var(--gold); color: var(--navy);
+  }
+  .draft-step.done .draft-step-dot {
+    background: var(--green); border-color: var(--green); color: #fff;
+  }
+  .draft-step-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .8px; color: var(--text2);
+  }
+  .draft-step.active .draft-step-label { color: var(--gold); }
+  .draft-step.done .draft-step-label { color: var(--green); }
+  .draft-step-line {
+    flex: 1; height: 2px; background: var(--border); margin: 0 4px;
+    margin-bottom: 14px; /* align with center of dot */
+    transition: background .2s;
+  }
+  .draft-step-line.active-line { background: var(--green); }
+
+  /* ─── DRAFT PHASE STEPPER ─── */
+  .draft-stepper {
+    display: flex; align-items: center; gap: 0;
+    padding: 16px 0 20px; margin-bottom: 4px;
+    justify-content: center;
+  }
+  .draft-step {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    min-width: 64px;
+  }
+  .draft-step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    background: var(--navy3); border: 2px solid var(--border);
+    color: var(--text2); transition: all .2s;
+  }
+  .draft-step.active .draft-step-dot {
+    background: var(--gold); border-color: var(--gold);
+    color: var(--navy); box-shadow: 0 0 12px rgba(245,166,35,0.4);
+  }
+  .draft-step.done .draft-step-dot {
+    background: var(--green); border-color: var(--green); color: #fff;
+  }
+  .draft-step-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+    color: var(--text2); font-weight: 600;
+  }
+  .draft-step.active .draft-step-label { color: var(--gold); }
+  .draft-step.done .draft-step-label { color: var(--green); }
+  .draft-step-line {
+    flex: 1; height: 2px; background: var(--border);
+    margin-bottom: 14px; /* align with dot center */
+    min-width: 32px; max-width: 80px;
+  }
+  .draft-step-line.active-line { background: var(--green); }
+
+  /* ─── DRAFT SETUP ─── */
+  .draft-step-card {
+    display: flex; gap: 16px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; margin-bottom: 14px;
+  }
+  .draft-step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--gold); color: var(--navy);
+    font-family: 'Bebas Neue'; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .draft-step-body { flex: 1; }
+  .draft-step-title {
+    font-family: 'Bebas Neue'; font-size: 18px; letter-spacing: 1px;
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .draft-sport-btns { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .draft-sport-btn {
+    padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 700;
+    cursor: pointer; border: 2px solid var(--border); background: transparent;
+    color: var(--text2); transition: all .18s; font-family: 'DM Sans';
+  }
+  .draft-sport-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .draft-sport-btn.active-baseball { background: rgba(37,99,235,0.2); color: #93c5fd; border-color: var(--baseball); }
+  .draft-sport-btn.active-softball { background: rgba(236,72,153,0.2); color: #f9a8d4; border-color: var(--softball); }
+  .draft-div-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .draft-div-btn {
+    padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: transparent;
+    color: var(--text2); transition: all .18s; font-family: 'DM Sans';
+  }
+  .draft-div-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+  .draft-div-btn:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text); }
+  .draft-player-count { display: flex; align-items: baseline; gap: 4px; margin-top: 6px; }
+
+  /* ─── DRAFT TEAM CONFIG ─── */
+  .draft-team-config-grid { display: flex; flex-direction: column; gap: 8px; }
+  .draft-team-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    background: rgba(255,255,255,0.03); border-left: 3px solid var(--border);
+    transition: background .15s;
+  }
+  .draft-team-row:hover { background: rgba(255,255,255,0.06); }
+  .draft-color-dot {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
+    transition: transform .15s, border-color .15s;
+  }
+  .draft-color-dot:hover { transform: scale(1.2); border-color: rgba(255,255,255,0.6); }
+  .draft-input {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--text); padding: 7px 10px; border-radius: 7px;
+    font-size: 13px; font-family: 'DM Sans'; outline: none;
+  }
+  .draft-input:focus { border-color: var(--blue2); }
+
+  /* ─── DRAFT TOGGLE ─── */
+  .draft-toggle-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; }
+  .draft-toggle {
+    width: 40px; height: 22px; border-radius: 11px;
+    background: rgba(255,255,255,0.1); position: relative;
+    transition: background .2s; flex-shrink: 0;
+  }
+  .draft-toggle.on { background: var(--gold); }
+  .draft-toggle::after {
+    content: ''; position: absolute;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; top: 2px; left: 2px;
+    transition: left .2s;
+  }
+  .draft-toggle.on::after { left: 20px; }
+
+  /* ─── DRAFT PREASSIGN ─── */
+  .draft-select {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--text); padding: 7px 10px; border-radius: 7px;
+    font-size: 13px; font-family: 'DM Sans'; outline: none; cursor: pointer;
+  }
+  .draft-preassign-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .draft-preassign-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .draft-preassign-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    background: rgba(255,255,255,0.04); border-left: 3px solid var(--border);
+    font-size: 13px;
+  }
+
+  /* ─── DRAFT STICKY HEADER ─── */
+
+/* Dashboard toggle btn: hidden on desktop (pick strip always visible there) */
+.draft-dash-btn { display:none; }
+
+/* Fade+slide animation for drawer */
+@keyframes fadeSlideDown {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+  .draft-sticky-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,22,40,0.95); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 18px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .draft-header-left { display: flex; align-items: center; gap: 20px; }
+  .draft-timer-block {
+    text-align: center; background: rgba(245,166,35,0.1);
+    border: 1px solid rgba(245,166,35,0.3); border-radius: 10px;
+    padding: 6px 16px; min-width: 80px;
+  }
+  .draft-timer-num {
+    font-family: 'Bebas Neue'; font-size: 32px; color: var(--gold);
+    letter-spacing: 2px; line-height: 1;
+  }
+  .draft-clock-team { font-family: 'DM Sans'; font-size: 16px; font-weight: 700; }
+  .draft-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ─── DRAFT ORDER STRIP (inline in header) ─── */
+  .draft-order-wrap { display: none; } /* no longer used as separate block */
+  .draft-order-strip {
+    display: flex; align-items: center; gap: 4px;
+    min-height: 24px; flex-wrap: nowrap; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .draft-order-strip::-webkit-scrollbar { display: none; }
+  .draft-order-chip {
+    padding: 3px 8px; border-radius: 12px;
+    font-size: 10px; font-weight: 700; white-space: nowrap;
+    transition: all .2s; color: #fff; flex-shrink: 0;
+  }
+  .draft-order-chip.current {
+    font-size: 12px; padding: 5px 12px;
+    box-shadow: 0 0 10px rgba(245,166,35,0.35);
+  }
+  .draft-order-arrow { color: var(--text2); font-size: 10px; flex-shrink: 0; opacity: 0.5; }
+
+  /* ─── DRAFT LAYOUT ─── */
+  .draft-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 14px; align-items: start;
+  }
+  @media (max-width: 900px) {
+    .draft-layout { grid-template-columns: 1fr; }
+    .draft-board-sidebar { order: -1; }
+  }
+  .draft-board-main { min-width: 0; }
+  .draft-board-sidebar {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; position: sticky; top: 90px;
+    max-height: calc(100vh - 120px); overflow-y: auto;
+  }
+
+  /* ─── PLAYER CARDS — mobile-first accordion ─── */
+  .draft-available-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .draft-drafted-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .draft-card {
+    border-radius: 12px;
+    transition: border-color .15s, box-shadow .15s;
+    overflow: hidden;
+  }
+  .draft-card-available {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+  }
+  .draft-card-available:hover {
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+  .draft-card-done {
+    border: 1px solid;
+    opacity: 0.82;
+  }
+  .draft-card-name {
+    font-weight: 700; font-size: 14px; color: var(--text);
+    margin-bottom: 3px; line-height: 1.2;
+  }
+  .draft-card-city { display: none; }
+
+  /* On larger screens, switch to grid */
+  @media (min-width: 700px) {
+    .draft-available-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+    .draft-drafted-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 8px;
+    }
+  }
+
+  /* ─── ROSTER SIDEBAR ─── */
+  .draft-roster-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px; border-top: 3px solid;
+    margin-bottom: 10px;
+  }
+
+  /* ─── DRAFT MULTI-SELECT PRE-ASSIGN ─── */
+  .draft-preassign-player-list {
+    display: flex; flex-direction: column; gap: 3px;
+    max-height: 260px; overflow-y: auto;
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px; margin-bottom: 4px;
+    background: rgba(255,255,255,0.02);
+  }
+  .draft-preassign-player-row {
+    border-radius: 6px;
+  }
+
+  /* ─── DRAFT TEAM ROW: expanded for assistants ─── */
+  .draft-team-row.expanded { flex-direction: column; align-items: stretch; }
+
+  /* ─── DRAFT LAYOUT: slightly wider sidebar ─── */
+  .draft-layout {
+    grid-template-columns: 1fr 300px;
+  }
+
+  /* ─── DRAFTED GRID ─── */
+  .draft-card-done {
+    padding: 10px 12px;
+  }
+
+  /* ─── RESULTS ─── */
+  .draft-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .draft-result-roster {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px;
+  }
+
+  /* ─── PLAYER STATS MODAL ─── */
+  .stats-season-block {
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .stats-season-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; flex-wrap: wrap; gap: 4px;
+  }
+  .stats-section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .7px;
+    color: var(--text2); font-weight: 700; margin-bottom: 8px;
+  }
+  .stats-grid-4 {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 6px;
+  }
+  .stat-pill {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 6px; text-align: center;
+  }
+  .sp-val {
+    font-family: 'Bebas Neue'; font-size: 18px; color: var(--text);
+    line-height: 1; letter-spacing: .5px;
+  }
+  .sp-lbl {
+    font-size: 9px; text-transform: uppercase; letter-spacing: .5px;
+    color: var(--text2); margin-top: 2px;
+  }
+  .gc-stat-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+    background: rgba(37,99,235,0.2); color: var(--blue2);
+    border: 1px solid rgba(37,99,235,0.3);
+    white-space: nowrap;
+  }
+  .gc-stat-badge.gold {
+    background: rgba(245,166,35,0.15); color: var(--gold);
+    border-color: rgba(245,166,35,0.3);
+  }
+  .gc-icon { cursor: default; }
+
+  /* ─── HEALTH PAGE ─── */
+  .health-target-label {
+    font-size: 10px; color: rgba(245,166,35,0.7);
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  #funnelChart svg text { font-family: 'DM Sans', sans-serif; }
+  #funnelChart { border-radius: 8px; }
+
+  /* ─── MOBILE (≤ 640px) ─── */
+  @media (max-width: 640px) {
+    /* Header */
+    .header-inner { flex-wrap:wrap; gap:8px; }
+    .header-title { font-size:22px; }
+    .header-sub { font-size:11px; }
+    .header-actions { flex-wrap:wrap; gap:6px; }
+    .header-actions .btn { font-size:11px; padding:5px 10px; }
+
+    /* Mobile header: centered logo + one-line title */
+    .header {
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 0 6px;
+      margin-bottom: 0;
+      gap: 5px;
+      border-bottom: none;
+    }
+    .header-left { flex-direction: column; align-items: center; gap: 4px; }
+    .header-left h1 { display: block; font-size: 16px; letter-spacing: 1.5px; white-space: nowrap; }
+    .header-left .header-sub { display: none; }
+    .logo-img { height: 47px; }
+    /* Mobile header actions: only show primary + settings + overflow toggle */
+    .header-actions {
+      order: 10;
+      width: 100%;
+      flex-wrap: nowrap;
+      padding: 5px 8px 5px;
+      justify-content: flex-end;
+      gap: 6px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-actions .btn { white-space: nowrap; font-size: 11px; padding: 4px 9px; flex-shrink: 0; }
+    .header-extra { display: none !important; }
+    .header-overflow-btn { display: inline-flex !important; font-size: 14px; letter-spacing: 1px; }
+
+    /* Tabs — mobile handled by nav-group CSS above */
+
+    /* Cards + wrap */
+    .wrap { padding:0 12px 32px; }
+    .card { padding:16px 14px; }
+    .card-title { font-size:17px; }
+
+    /* Stat grid — 2 columns on mobile */
+    .stat-grid { grid-template-columns: repeat(2, 1fr); gap:8px; }
+    .stat-card { padding:12px; }
+    .stat-value { font-size:28px; }
+
+    /* Charts */
+    .chart-wrap { height:180px; }
+    .chart-wrap-lg { height:220px; }
+
+    /* Roster table — hide less important columns */
+    #rosterTable th:nth-child(3),
+    #rosterTable td:nth-child(3),
+    #rosterTable th:nth-child(6),
+    #rosterTable td:nth-child(6) { display:none; }
+
+    /* Draft sticky header — compact on mobile */
+    .draft-sticky-header {
+      padding:8px 10px !important;
+      gap:6px !important;
+      flex-wrap:nowrap !important;
+    }
+    .draft-timer-num { font-size:22px !important; }
+    .draft-clock-team { font-size:11px !important; }
+    .draft-order-strip { max-width:100% !important; overflow-x:auto; }
+    /* On mobile: hide the inline pick strip (shown in drawer instead) */
+    .draft-pick-strip-wrap { display:none !important; }
+    /* Show the 📋 dashboard toggle button on mobile */
+    .draft-dash-btn { display:inline-flex !important; }
+
+    /* Draft layout — stacked, sidebar below */
+    .draft-layout {
+      grid-template-columns:1fr !important;
+      gap:0 !important;
+    }
+    .draft-board-sidebar {
+      order:3 !important;
+      padding-top:12px !important;
+    }
+    .draft-board-main { min-width:0; }
+
+    /* Available grid — 2 compact columns on mobile */
+    #draftAvailableGrid {
+      grid-template-columns: 1fr !important;
+      gap:8px !important;
+    }
+
+    /* Pre-draft setup — team rows stack cleanly */
+    .draft-step-card { padding:12px 10px !important; }
+    .draft-step-card .draft-step-body { min-width:0; }
+
+    /* Fixed footer Start Draft button — ensure content scrolls above it */
+    #draftSetupContent { padding-bottom:0 !important; }  /* padding handled by #draftPhase_setup */
+    #draftPhase_setup { overflow-x:hidden; }
+    .draft-team-row > div:first-child {
+      flex-wrap:wrap !important;
+      gap:6px !important;
+    }
+    /* Team header: name takes full width, controls wrap below */
+    .draft-team-row .draft-input { min-width:0 !important; width:100% !important; }
+    /* Coach rows: label above, input below */
+    .draft-team-row [style*="min-width:80px"],
+    .draft-team-row [style*="min-width:90px"] {
+      min-width:0 !important;
+      width:auto !important;
+    }
+    /* Step 2 configure teams header — wrap the max/add controls */
+    .draft-step-title { flex-wrap:wrap !important; gap:8px !important; }
+    .draft-step-title > div { margin-left:0 !important; width:100% !important; }
+    /* Hide per-team max input on mobile to save space */
+    .draft-team-row label[title*="Max players for"] { display:none !important; }
+
+    /* Draft cards — slimmer on mobile */
+    .draft-card {
+      padding:8px 10px !important;
+      min-height:0 !important;
+    }
+    .draft-card-name { font-size:13px; }
+
+    /* Search bar full width */
+    #draftSearch { width:100% !important; min-width:0 !important; box-sizing:border-box; }
+
+    /* Team rosters — 1 col cards */
+    #draftRosters { flex-direction:column !important; }
+    .draft-roster-card { font-size:12px !important; }
+
+    /* Modals */
+    .modal { padding:16px 14px; max-height:92vh; margin:8px; width:calc(100% - 16px) !important;
+             max-width:none !important; }
+    .modal-title { font-size:18px; }
+
+    /* Team modal */
+    .team-name-edit { flex-wrap:wrap; gap:8px; }
+    .team-name-edit input { width:100%; }
+
+    /* Stats modal grid */
+    .stats-grid-4 { grid-template-columns: repeat(4, 1fr); gap:4px; }
+    .stat-pill { padding:5px 2px; }
+    .sp-val { font-size:13px; }
+    .sp-lbl { font-size:9px; }
+
+    /* All-stars top performers — stack */
+    #allStarTopPerformers > div > div { grid-template-columns:1fr !important; }
+
+    /* Coach roster grid — 1 column */
+    #coachRosterGrid { grid-template-columns:1fr !important; }
+
+    /* Health page funnel */
+    .funnel-wrap { overflow-x:auto; }
+  }
+
+  /* ─── TABLET (641–900px) ─── */
+  @media (min-width:641px) and (max-width:900px) {
+    .stat-grid { grid-template-columns: repeat(3, 1fr); }
+    .wrap { padding:0 16px 40px; }
+    #draftAvailableGrid { grid-template-columns: repeat(2, 1fr) !important; }
+    #allStarTopPerformers > div > div { grid-template-columns:1fr 1fr; }
+  }
+
+
+
+
+
+  /* ─── HIGHLIGHTS — compact row on mobile ─── */
+  @media (max-width: 640px) {
+    #leagueHighlights > div { padding:12px 14px; }
+    #leagueHighlights .highlight-item { padding:7px 10px !important; }
+  }
+
+  /* ─── YOY — insights column stacks below chart ─── */
+  @media (max-width: 640px) {
+    #yoyInsights { padding-left:0 !important; padding-top:12px; }
+  }
+
+  /* ─── HEALTH — div capacity bars compact ─── */
+  @media (max-width: 640px) {
+    #healthBars > div { margin-bottom:10px !important; }
+  }
+
+  /* ─── MODAL — better mobile sizing ─── */
+  @media (max-width: 640px) {
+    .modal { width:calc(100vw - 24px) !important; max-width:none !important;
+             padding:16px 14px !important; margin:0 !important;
+             border-radius:14px !important; }
+    .modal-overlay { padding:12px !important; align-items:flex-end; }
+  }
+
+
+
+  /* ─── TEAMS — filter bar ─── */
+  #tab-teams > div:first-child { margin-bottom:16px; }
+
+  /* ─── OVERVIEW stat grid top ─── */
+  #overviewStats { margin-bottom:16px; }
+
+  /* ─── SOCIAL tab — no extra card wrapper ─── */
+  #tab-social .card:first-child { margin-top:0; }
+
+  /* ─── ALLSTARS eligible — better mobile ─── */
+  @media (max-width:640px) {
+    #allStarCards { grid-template-columns:repeat(2,1fr) !important; }
+  }
+
+  /* ─── TIMELINE coming-up card ─── */
+  @media (max-width:640px) {
+    #timelineContent > div:first-child { padding:12px 14px; }
+  }
+
+  /* ─── DRAFT PICKS drag handle — bigger on mobile ─── */
+  @media (max-width:640px) {
+    #evalPicksList > div { padding:10px 12px !important; }
+    #evalPicksList > div > div:last-child { opacity:.6; }
+  }
+
+  /* ─── Smoothed scrolling ─── */
+  html { scroll-behavior: smooth; }
+  .section { scroll-margin-top: 20px; }
+
+  /* ─── BADGE improvements ─── */
+  .badge { 
+    display:inline-flex; align-items:center; 
+    padding:2px 7px; border-radius:99px; 
+    font-size:10px; font-weight:700; 
+    white-space:nowrap; 
+  }
+
+  /* ─── Table rows — better hover ─── */
+  #rosterTable tbody tr { transition:background .12s; }
+  #rosterTable tbody tr:hover { background:rgba(255,255,255,0.04); }
+
+  /* ─── Card title — consistent spacing ─── */
+  .card-title { margin-bottom:14px; }
+
+
+
+
+  /* ─── ROSTER row class ─── */
+  .roster-row td { vertical-align:middle; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* ══════════════════════════════════════════════════
+     TIMELINE PAGE — visual overhaul
+     ══════════════════════════════════════════════════ */
+
+  /* ── Hero progress block ── */
+  .tl-hero {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: stretch;
+  }
+  .tl-hero-left {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px 16px;
+  }
+  .tl-hero-label {
+    font-family: 'DM Sans';
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+  .tl-hero-pct {
+    font-family: 'Bebas Neue';
+    font-size: 64px;
+    line-height: 1;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+  .tl-hero-pct-sym {
+    font-size: 32px;
+    vertical-align: super;
+    color: var(--gold2);
+    opacity: .7;
+  }
+  .tl-hero-sub {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 2px;
+    margin-bottom: 14px;
+  }
+  .tl-progress-bar {
+    position: relative;
+    height: 6px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 99px;
+    overflow: visible;
+  }
+  .tl-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold2), var(--gold));
+    border-radius: 99px;
+    transition: width .6s ease;
+    box-shadow: 0 0 10px rgba(245,166,35,.4);
+  }
+  .tl-progress-dot {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--navy);
+    box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(245,166,35,.6);
+  }
+
+  /* ── Next event card ── */
+  .tl-hero-next {
+    width: 200px;
+    flex-shrink: 0;
+    border: 1px solid;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .tl-hero-next-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .tl-next-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .tl-next-date {
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tl-hero-next-icon { font-size: 28px; line-height: 1; }
+  .tl-hero-next-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-top: 4px;
+  }
+  .tl-hero-next-days {
+    font-family: 'Bebas Neue';
+    font-size: 16px;
+    letter-spacing: .5px;
+    margin-top: 4px;
+  }
+
+  /* ── Coming up strip ── */
+  .tl-soon-strip {
+    margin-bottom: 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .tl-soon-title {
+    font-family: 'Bebas Neue';
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .tl-soon-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .tl-soon-scroll::-webkit-scrollbar { display: none; }
+  .tl-soon-card {
+    flex-shrink: 0;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 10px 12px;
+    min-width: 130px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .tl-soon-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    align-self: flex-start;
+    text-transform: uppercase;
+  }
+  .tl-soon-icon { font-size: 18px; margin: 3px 0; }
+  .tl-soon-name { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.3; }
+  .tl-soon-dt   { font-size: 10px; font-weight: 700; margin-top: 2px; }
+
+  /* ── Phase legend ── */
+  .tl-phase-legend {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .tl-phase-chip {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+
+  /* ── Month card grid ── */
+  .tl-month-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+  .tl-month-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: border-color .2s;
+  }
+  .tl-month-card.tl-month-active {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+
+  /* ── Month header ── */
+  .tl-month-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .tl-month-phase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tl-month-name {
+    font-family: 'Bebas Neue';
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--text);
+  }
+  .tl-month-year {
+    font-size: 11px;
+    color: var(--text2);
+    margin-right: auto;
+  }
+  .tl-month-now-pill {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    text-transform: uppercase;
+  }
+  .tl-month-count {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* ── Event list inside card ── */
+  .tl-event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* ── Regular event row ── */
+  .tl-event-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 6px 0;
+    border-radius: 8px;
+    transition: background .12s;
+  }
+  .tl-event-row.tl-event-next {
+    background: rgba(245,166,35,0.07);
+    padding: 6px 8px;
+    margin: 0 -8px;
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 8px;
+  }
+  .tl-event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .tl-event-row-top {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .tl-event-icon { font-size: 12px; flex-shrink: 0; }
+  .tl-event-label {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .tl-next-tag {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .tl-today-tag {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--green);
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .tl-event-meta {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-top: 2px;
+  }
+  .tl-event-date {
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .tl-event-notebody {
+    font-size: 10px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+
+  /* ── Key event banner (Opening Day etc.) ── */
+  .tl-event-banner {
+    position: relative;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 4px 0;
+    overflow: hidden;
+  }
+  .tl-event-banner-glow {
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    opacity: .8;
+  }
+  .tl-event-banner-label {
+    font-family: 'Bebas Neue';
+    font-size: 16px;
+    letter-spacing: .5px;
+    line-height: 1.2;
+  }
+  .tl-event-banner-date {
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .tl-event-note {
+    font-size: 10px;
+    color: var(--text2);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ── Mobile responsive ── */
+  @media (max-width: 600px) {
+    .tl-hero { flex-direction: column; }
+    .tl-hero-next { width: 100%; flex-direction: row; align-items: center; gap: 12px; }
+    .tl-hero-next-icon { font-size: 22px; }
+    .tl-hero-next-label { font-size: 12px; }
+    .tl-month-grid { grid-template-columns: 1fr; }
+    .tl-hero-pct { font-size: 48px; }
+  }
+
+
+  /* ── COACHING TOOLS PANEL ── */
+  #ct-tool-body {
+    min-height: 200px;
+  }
+  .pc-type-btn {
+    transition: all .12s;
+  }
+  .pc-type-btn:hover {
+    transform: scale(1.05);
+  }
+  .pc-type-btn:active {
+    transform: scale(.97);
+  }
+  /* ─── POSITION PICKER (player journey modal) ─── */
+  .pos-picker-grid button:hover {
+    transform: scale(1.06);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .pos-picker-grid button:active {
+    transform: scale(0.97);
+  }
+  /* Native datalist dropdown — best we can do cross-browser */
+  datalist { display: none; }
+
+  /* ─── TOOLS NAV PILL ─── */
+  .active-tools-pill.active {
+    background: rgba(139,92,246,0.18);
+    color: #a78bfa;
+    border-color: rgba(139,92,246,0.45);
+    font-weight: 700;
+  }
+
+  /* ─── DIV DETAIL YOY CHART ─── */
+  #divDetailContent .chart-wrap {
+    height: 200px;
+  }
+
+  /* ─── EVAL — mobile layout improvements ─── */
+  .eval-grading-card {
+    touch-action: pan-y;
+    user-select: none;
+  }
+  .eval-progress-strip {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .eval-dot-strip button:hover { transform: scale(1.15); }
+
+  @media (max-width: 640px) {
+    /* On mobile: hide desktop player tabs, show dot strip */
+    #evalPlayerTabs { display: none !important; }
+    /* Eval Day rating buttons — bigger tap targets */
+    .eval-grading-card button[onclick*="evalSetDayGrade"] {
+      padding: 12px 6px !important;
+      min-height: 56px;
+    }
+    /* Clinic drill rating buttons — bigger on mobile */
+    .eval-grading-card button[onclick*="evalSetDrillGrade"] {
+      padding: 8px 10px !important;
+      min-height: 38px;
+    }
+    /* Compact action buttons in header */
+    .eval-action-btn { font-size: 10px !important; padding: 5px 8px !important; }
+    /* Media thumbnails — slightly bigger on mobile */
+    #evalGradingCard label { min-width: 76px; min-height: 76px; }
+  }
+  @media (min-width: 641px) {
+    /* Desktop: hide dot strip row, keep progress bar */
+    .eval-dot-strip { display: none; }
+  }
+
+  /* ─── OVERVIEW section dividers ─── */
+  .section-divider {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--text2);
+    text-transform: uppercase;
+    padding: 4px 0 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin: 20px 0 14px;
+    opacity: .75;
+  }
+
+  /* ─── FILTER BAR — card style + mobile stack ─── */
+  .filter-bar {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-bar select, .filter-bar input[type=text] {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-family: 'DM Sans';
+    font-size: 12px;
+    outline: none;
+  }
+  .filter-bar select:hover, .filter-bar input[type=text]:hover {
+    border-color: rgba(255,255,255,0.2);
+  }
+  @media (max-width: 640px) {
+    .filter-bar { gap: 8px; }
+    .filter-bar select { flex: 1; min-width: 0; }
+    .filter-bar input[type=text] { flex: 1 0 100%; min-width: 0; }
+    .filter-label { display: none; }
+  }
+
+  /* ─── TWO-COL — stack at 760px ─── */
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr !important; }
+  }
+
+  /* ─── STAT CARDS — hover lift ─── */
+
+
+  /* ─── HIGHLIGHTS — horizontal scroll on mobile ─── */
+  @media (max-width: 640px) {
+    .highlights-desktop {
+      display: flex !important;
+      flex-direction: row !important;
+      overflow-x: auto !important;
+      gap: 8px !important;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .highlights-desktop::-webkit-scrollbar { display: none; }
+    .highlight-item {
+      min-width: 200px !important;
+      max-width: 220px !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  /* ─── CHARTS — taller on desktop ─── */
+  @media (min-width: 900px) {
+    .chart-wrap { height: 240px; }
+    .chart-wrap-lg { height: 300px; }
+  }
+
+  /* ─── ROSTER — table row hover ─── */
+  #rosterTable tbody tr { transition: background .12s; }
+  #rosterTable tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+  /* ─── MODALS — slide up on mobile ─── */
+  @media (max-width: 640px) {
+    .modal-overlay { padding: 12px !important; align-items: flex-end !important; }
+    .modal {
+      width: calc(100vw - 24px) !important;
+      max-width: none !important;
+      padding: 16px 14px !important;
+      margin: 0 !important;
+      border-radius: 16px 16px 0 0 !important;
+    }
+  }
+
+  /* ─── GENERAL spacing ─── */
+  html { scroll-behavior: smooth; }
+  .section > .card + .card,
+  .section > .two-col + .card,
+  .section > .section-divider + .card { margin-top: 0; }
+  .section-divider + .two-col { margin-top: 0; }
+
+  /* ─── YOY subtab bar ─── */
+  .yoy-subtab-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .yoy-sub-tab {
+    padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    cursor: pointer; border: 1px solid var(--border);
+    background: transparent; color: var(--text2);
+    transition: all .15s; font-family: "DM Sans";
+  }
+  .yoy-sub-tab.active {
+    background: var(--card2); color: var(--text); border-color: rgba(255,255,255,0.15);
+  }
+
+
+  /* ─── Manual Stats Entry grid ─── */
+  .ms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+  }
+  .ms-grid .form-group label { font-size: 11px; }
+  .ms-grid .form-group input {
+    font-size: 13px; padding: 6px 8px;
+  }
+
+  /* ── Fire animation ── */
+  @keyframes flameRise {
+    0%   { transform: translateX(-50%) translateY(0) scale(1);   opacity: 1; }
+    100% { transform: translateX(-50%) translateY(-140px) scale(1.6); opacity: 0; }
+  }
+  @keyframes flameSway {
+    0%,100% { transform: scaleX(1); }
+    50%      { transform: scaleX(0.85); }
+  }
+  .fire-particle {
+    position: fixed;
+    bottom: 0;
+    font-size: 48px;
+    pointer-events: none;
+    z-index: 99999;
+    animation: flameRise 1.1s ease-out forwards;
+    user-select: none;
+  }
+  .fire-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 100%, rgba(255,80,0,0.22) 0%, transparent 60%);
+    animation: flameRise 1.2s ease-out forwards;
+  }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ── Auto-injected modal close button (top-right X) ──────────────────── */
+.modal-close-x {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.modal-close-x:hover, .modal-close-x:active {
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+}
+.modal {
+  position: relative; /* ensure absolute children are positioned correctly */
+}
+
+/* ── Draft mobile bottom sheet ─────────────────────────────────── */
+@keyframes sheetSlideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes sheetSlideDown {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0; }
+}
+
+#draft-sheet-panel {
+  /* Extra safe-area padding for iPhone notch */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Draft card: no-data inline action row ─────────────────────── */
+.draft-card .dc-inline-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 12px 10px;
+}
+
+/* On mobile: cards are not expandable inline — tap opens sheet */
+@media (max-width: 640px) {
+  .dc-chevron { display: none !important; }
+}
+
+/* ── Mobile: draft compare bar fixed at bottom ─────────────────── */
+@media (max-width: 640px) {
+  #draftCompareBar {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    border-radius: 12px 12px 0 0 !important;
+    margin-bottom: 0 !important;
+    z-index: 200 !important;
+    padding: 12px 16px 16px !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-top: 2px solid rgba(245,166,35,0.5) !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  /* Push draft content up so the fixed compare bar doesn't cover it */
+  #draftCompareBar[style*="flex"] ~ .draft-layout,
+  #draftCompareBar[style*="flex"] ~ #draftSetupContent {
+    padding-bottom: 80px;
+  }
+}
+
+/* ── Mobile: draft setup — fixed start button, scrollable body ─── */
+@media (max-width: 640px) {
+  #draftPhase_setup {
+    /* No fixed height — let content determine its own size.
+       The Start Draft button is position:fixed so it's always visible. */
+    padding-bottom: 100px; /* space above the fixed Start Draft button */
+  }
+  #draftSetupContent {
+    /* Scroll is handled by the page, not this element */
+    overflow-y: visible;
+  }
+  /* Keep the start button fixed at bottom */
+  #draftStartBar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin-top: 0 !important;
+    z-index: 100 !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    background: linear-gradient(to top, var(--bg) 65%, transparent) !important;
+  }
+  /* Team cards: full-width, slightly more compact on mobile */
+  .draft-team-config-grid { gap: 10px; }
+  .draft-team-row > div:first-child { flex-wrap: wrap; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BUG FIXES & UI POLISH — March 2026
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Text truncation — prevent overflow in cards/tables ─────────── */
+.player-name-cell,
+.team-name-cell,
+.rc-name,
+td.pname {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stat card labels — no overflow */
+.stat-card .stat-label,
+.stat-card .stat-sub,
+.gc-stat-badge {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ── Journey modal — full-height on mobile ───────────────────────── */
+@media (max-width: 640px) {
+  #journeyModal .modal {
+    max-width: none !important;
+    width: 100vw !important;
+    max-height: 95dvh !important;
+    border-radius: 16px 16px 0 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #journeyModal .modal-overlay,
+  #journeyModal.modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+  /* Headshot smaller on mobile */
+  #journeyHeadshotWrap {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  /* Tab buttons compact */
+  #journeyModal .tab {
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* ── Stats modal — better mobile ────────────────────────────────── */
+@media (max-width: 640px) {
+  #statsModal .modal {
+    max-height: 93dvh !important;
+    padding: 16px 12px !important;
+  }
+  .stats-grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
+  .sp-val { font-size: 13px !important; }
+}
+
+/* ── Draft compare modal — mobile full-width ─────────────────────── */
+@media (max-width: 640px) {
+  #draftCompareModal .modal {
+    width: 100vw !important;
+    max-width: none !important;
+    border-radius: 16px 16px 0 0 !important;
+    margin: 0 !important;
+    padding: 14px 12px !important;
+  }
+  #draftCompareModal.modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+}
+
+/* ── Roster table — horizontal scroll on mobile ──────────────────── */
+@media (max-width: 640px) {
+  .roster-table-wrap,
+  #rosterTableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* ── Nav header — prevent overflow on tiny screens ───────────────── */
+@media (max-width: 380px) {
+  .app-header { padding: 10px 12px !important; }
+  .header-actions { gap: 4px !important; }
+  #headerSub { display: none; }
+}
+
+/* ── Card padding — tighter on mobile ───────────────────────────── */
+@media (max-width: 480px) {
+  .card { padding: 14px !important; }
+  .wrap { padding: 0 12px 40px !important; }
+}
+
+/* ── Buttons — minimum tap target 44px height ────────────────────── */
+.btn { min-height: 36px; }
+.btn-sm { min-height: 32px; }
+.nav-pill { min-height: 34px; }
+
+/* ── Form inputs — larger on mobile for easier tapping ──────────── */
+@media (max-width: 640px) {
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-height: 42px;
+    font-size: 16px !important; /* prevents iOS zoom */
+  }
+}
+
+/* ── Highlight strip — overflow safe ─────────────────────────────── */
+#leagueHighlights {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Two-col stacks sooner on narrow tablets ─────────────────────── */
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr !important; }
+}
+
+/* ── Draft cards — min-height for consistency ────────────────────── */
+.draft-card { min-height: 80px; }
+
+/* ── Journey tabs — scrollable if many tabs ──────────────────────── */
+#journeyModal [style*="display:flex;gap:4px"] {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+#journeyModal [style*="display:flex;gap:4px"]::-webkit-scrollbar { display: none; }
+
+/* ── Modal close X — bigger tap target on mobile ─────────────────── */
+@media (max-width: 640px) {
+  .modal-close-x {
+    width: 38px !important;
+    height: 38px !important;
+    top: 8px !important;
+    right: 8px !important;
+    font-size: 18px !important;
+  }
+}
+
+/* ── YOY chart — min-height prevents collapse ────────────────────── */
+.chart-wrap canvas { display: block; }
+
+/* ── Overflow guard on all section cards ─────────────────────────── */
+.section > .card { overflow: hidden; }
+.section > .card > * { min-width: 0; }
+
+/* ── Preview mode banner — safe area aware ───────────────────────── */
+#lll-preview-banner {
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+
+/* ── Stat value — responsive font size ───────────────────────────── */
+@media (max-width: 480px) {
+  .stat-value { font-size: 28px !important; }
+  .stat-card { padding: 11px 12px !important; }
+  .stat-label { font-size: 10px !important; letter-spacing: 0.3px; }
+  .stat-delta { font-size: 10px !important; }
+}
+
+/* ── Roster table — horizontal scroll with sticky first col ─────── */
+#rosterTableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+  #rosterTable { min-width: 480px; }
+  #rosterTable td:first-child,
+  #rosterTable th:first-child { position: sticky; left: 0; background: var(--card); z-index: 2; }
+}
+
+/* ── Journey modal header — tighter on mobile ────────────────────── */
+@media (max-width: 480px) {
+  #journeyModal .modal { max-height: 98dvh !important; }
+  #journeyHeadshotWrap { width: 40px !important; height: 40px !important; }
+  #journeyPlayerName { font-size: 18px !important; max-width: 160px !important; }
+  #journeyPlayerMeta { font-size: 10px !important; }
+}
+
+/* ── Draft card — stat dot chart label text ──────────────────────── */
+@media (max-width: 480px) {
+  .draft-card { font-size: 11px; }
+}
+
+/* ── All-star tab — stacked layout on mobile ─────────────────────── */
+@media (max-width: 640px) {
+  #allStarDetailContent .score-ring-wrap { flex-direction: column; gap: 12px; }
+}
+
+/* ── Prevent content jumping behind fixed bars on iOS Safari ─────── */
+@supports (-webkit-touch-callout: none) {
+  .modal-overlay.open { padding-bottom: env(safe-area-inset-bottom, 16px); }
+  #draftStartBar { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+
+/* ── Long team name truncation in roster rows ────────────────────── */
+#rosterTable td:nth-child(4) {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Highlight strip — ensure full width on all screens ──────────── */
+.highlight-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+/* ── Filter bar — full-width on mobile ───────────────────────────── */
+@media (max-width: 640px) {
+  .filter-bar { flex-wrap: wrap !important; }
+  .filter-bar select,
+  .filter-bar input { width: 100% !important; flex: 1 0 100% !important; }
+}
+
+/* ── Eval modal — input sizing iOS safe ─────────────────────────── */
+@media (max-width: 640px) {
+  #evalModal input[type=range] { width: 100%; }
+}
+
+/* ── Navigation pills — active state more visible ─────────────────── */
+.nav-pill.active { box-shadow: 0 0 0 1px var(--blue2); }
+
+/* ── Overview page — chart wraps don't collapse ──────────────────── */
+.chart-wrap { min-height: 120px; position: relative; }
+.chart-wrap-lg { min-height: 160px; position: relative; }
+
+
+/* ── Highlights scroll strip — hide scrollbar, touch friendly ─── */
+.highlights-scroll-strip::-webkit-scrollbar { display: none; }
+.highlights-scroll-strip { scrollbar-width: none; }
+@media (max-width: 640px) {
+  .highlights-scroll-strip > div { width: 170px !important; }
+}
+
+/* ── Registration Timing tab — mobile ────────────────────────────── */
+#tab-timing .card-title small { display: block; margin-top: 2px; }
+#tab-timing canvas { display: block; }
+
+/* Insight cards: 4 per row on wide, 2 on mid, 1 on small */
+.timing-cards {
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+}
+@media (max-width: 900px) {
+  .timing-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .timing-cards { grid-template-columns: 1fr 1fr; gap: 5px; }
+  .timing-cards > div { padding: 7px 8px; }
+}
+@media (max-width: 360px) {
+  .timing-cards { grid-template-columns: 1fr; }
+}
+
+/* Daily/Hour side-by-side → stack on mobile */
+@media (max-width: 640px) {
+  #tab-timing .two-col { grid-template-columns: 1fr; }
+  #tab-timing .two-col canvas { height: 180px !important; }
+  #timingCumulChart { height: 260px !important; }
+}
+
+/* Legend wraps cleanly */
+#tab-timing .timing-legend {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  font-size: 11px; color: var(--text2); margin-bottom: 10px;
+}
+@media (max-width: 480px) {
+  #tab-timing .timing-legend { font-size: 10px; gap: 6px; }
+  #tab-timing .timing-legend span { white-space: nowrap; }
+}
+
+/* Milestone table — scroll on mobile */
+#tab-timing table { min-width: 480px; }
+
+/* Year buttons in timing tab */
+#timingDailyTabs button, #timingHourTabs button {
+  min-height: 30px; min-width: 44px;
+}
+@media (max-width: 480px) {
+  #timingDailyTabs, #timingHourTabs { gap: 4px; }
+  #timingDailyTabs button, #timingHourTabs button {
+    padding: 4px 8px; font-size: 11px; min-width: 36px;
+  }
+}
+
+/* ── DRAFT MODE — hides all player stats, positions, rankings ────────────
+   Activated by body.draft-mode when admin enables the Draft Mode toggle.
+   Applies to everyone including the admin. ─────────────────────────────── */
+
+/* Roster: stat column badges, OPS, performance emojis all hidden via JS.
+   Also hide the stats table header in roster if it somehow renders */
+body.draft-mode .stats-badge,
+body.draft-mode [data-stat-badge],
+body.draft-mode .stat-badge { display: none !important; }
+
+/* Player edit/add modals: pitching, catching, preferred positions rows */
+body.draft-mode .draft-hide-positions { display: none !important; }
+
+/* Stats modal — hide the entire modal if opened (belt + suspenders on top of JS guard) */
+body.draft-mode #statsModal { display: none !important; }
+
+/* Journey modal — hide the GC stats section within it */
+body.draft-mode .journey-stats-section,
+body.draft-mode [id*="journeyStats"],
+body.draft-mode .gc-stat-row { display: none !important; }
+
+/* Draft board — hide pitching/catching/position badges on player cards */
+body.draft-mode .draft-pos-badge,
+body.draft-mode .draft-pitch-badge,
+body.draft-mode .draft-catch-badge,
+body.draft-mode [class*="pos-badge"] { display: none !important; }
+
+/* Rankings sections anywhere */
+body.draft-mode .rankings-section,
+body.draft-mode [id*="rankings"],
+body.draft-mode #standoutsSection { display: none !important; }
+
+/* Draft mode: no banner — stats are off by default, toggle turns them on */

@@ -1,0 +1,11 @@
+raw_data/
+
+# macOS metadata
+._*
+.DS_Store
+
+# player data never goes in this public repo
+processed_data.xlsx
+*.xlsx
+*.csv
+raw_data/

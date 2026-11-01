@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lunenburg Youth Baseball &amp; Softball — Registration Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Auth screen (shown when not logged in) -->
+<div id="authScreen" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--navy);"></div>
+
+<!-- Settings modal -->
+<div id="settingsModal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+  <div class="modal" style="max-width:440px;width:100%;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;">⚙️ Settings</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeSettings()">✕</button>
+    </div>
+    <div id="settingsContent"></div>
+  </div>
+</div>
+
+<!-- Main app (hidden until logged in) -->
+<div id="appRoot" style="display:none;">
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <img class="logo-img" onclick="switchTab('overview')" title="Go to Overview" src="logo.svg" alt="LYBS Logo" / loading="lazy">
+      <div>
+        <h1>Lunenburg Youth <span>Baseball &amp; Softball</span></h1>
+        <div class="header-sub" id="headerSub">Loading...</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <!-- Always visible: primary action + settings -->
+      <button class="btn btn-gold btn-sm" onclick="openModal('addPlayerModal')">+ Add Player</button>
+      <!-- Admin-only: Preview Mode toggle — hidden via JS for non-admins -->
+      <button id="previewModeHeaderBtn" onclick="previewModeToggle()" title="Preview as regular user"
+        style="display:none;font-size:15px;padding:5px 10px;border-radius:8px;border:1px solid rgba(249,115,22,0.4);background:transparent;color:#f97316;cursor:pointer;transition:all .15s;"
+        onmouseover="this.style.background='rgba(249,115,22,0.12)'" onmouseout="this.style.background='transparent'">👁</button>
+      <button id="settingsHeaderBtn" class="btn btn-ghost btn-sm" onclick="openSettings()" title="Settings" style="font-size:16px;padding:5px 10px;">⚙️</button>
+      <!-- Visible on desktop only -->
+      <button class="btn btn-ghost btn-sm header-extra" id="cloudSyncBtn" onclick="manualCloudSync()" title="Push all data to cloud now" style="border-color:rgba(96,165,250,.4);color:#60a5fa;">☁️ Sync</button>
+      <button class="btn btn-ghost btn-sm header-extra" onclick="openModal('uploadModal')">⬆ Upload</button>
+      <button id="gcStatsBtn" class="btn btn-ghost btn-sm header-extra" onclick="openGCStatsImport()" title="Import GameChanger stats CSV">📊 GC Stats</button>
+      <button class="btn btn-primary btn-sm header-extra" onclick="refreshAll()">↻ Refresh</button>
+      <!-- Mobile-only overflow toggle -->
+      <button class="btn btn-ghost btn-sm header-overflow-btn" onclick="toggleHeaderOverflow()" title="More options">•••</button>
+    </div>
+    <!-- Mobile overflow dropdown -->
+    <div id="headerOverflowMenu" class="header-overflow-menu" style="display:none;">
+      <!-- Admin-only preview in mobile menu too -->
+      <button id="previewModeHeaderBtnMobile" onclick="previewModeToggle();toggleHeaderOverflow()"
+        style="display:none;border:1px solid rgba(249,115,22,0.4);color:#f97316;background:transparent;
+               width:100%;justify-content:flex-start;font-family:'DM Sans';font-size:13px;
+               padding:8px 12px;border-radius:8px;cursor:pointer;text-align:left;">👁 Preview as User</button>
+      <button class="btn btn-ghost btn-sm" id="cloudSyncBtnMobile" onclick="manualCloudSync();toggleHeaderOverflow()" style="border-color:rgba(96,165,250,.4);color:#60a5fa;width:100%;justify-content:flex-start;">☁️ Sync to Cloud</button>
+      <button class="btn btn-ghost btn-sm" onclick="openModal('uploadModal');toggleHeaderOverflow()" style="width:100%;justify-content:flex-start;">⬆ Upload Data</button>
+      <button id="gcStatsBtnOverflow" class="btn btn-ghost btn-sm" onclick="openGCStatsImport();toggleHeaderOverflow()" style="width:100%;justify-content:flex-start;">📊 GC Stats Import</button>
+      <button class="btn btn-primary btn-sm" onclick="refreshAll();toggleHeaderOverflow()" style="width:100%;justify-content:flex-start;">↻ Refresh</button>
+    </div>
+  </header>
+
+  <!-- TABS — two-row grouped nav -->
+  <nav id="mainNav" role="navigation" aria-label="Main navigation">
+    <!-- Mode bar: 2 big segment tabs -->
+    <div class="nav-mode-bar">
+      <button class="nav-mode-btn active" id="modeBtn-league" onclick="navSetMode('league')">
+        <span class="nav-mode-icon">📊</span>
+        <span class="nav-mode-label">League</span>
+      </button>
+      <button class="nav-mode-btn" id="modeBtn-coaches" onclick="navSetMode('coaches')">
+        <span class="nav-mode-icon">👤</span>
+        <span class="nav-mode-label">Coaches</span>
+      </button>
+    </div>
+    <!-- League pills -->
+    <div class="nav-pills" id="navpills-league">
+      <button class="nav-pill active" onclick="switchTab('overview')" data-tab="overview">📊 Overview</button>
+      <button class="nav-pill" onclick="switchTab('yoy')" data-tab="yoy">📈 Year-over-Year</button>
+      <button class="nav-pill" onclick="switchTab('health')" data-tab="health">❤️ Health</button>
+      <button class="nav-pill" onclick="switchTab('timing')" data-tab="timing">🗓️ Registration Timing</button>
+      <button class="nav-pill" onclick="switchTab('timeline')" data-tab="timeline">📅 Timeline</button>
+      <button class="nav-pill" onclick="switchTab('social')" data-tab="social">📱 Social</button>
+    </div>
+    <!-- Coaches pills -->
+    <div class="nav-pills" id="navpills-coaches" style="display:none">
+      <button class="nav-pill" onclick="switchTab('roster')" data-tab="roster">📋 Roster</button>
+      <button class="nav-pill" onclick="switchTab('allstars')" data-tab="allstars">⭐ All-Stars</button>
+      <button class="nav-pill" onclick="switchTab('teams')" data-tab="teams">🏟️ Teams</button>
+      <button class="nav-pill" onclick="switchTab('evals')" data-tab="evals">📝 Evals</button>
+      <button class="nav-pill draft-pill" onclick="switchTab('draft')" data-tab="draft">🏆 Draft</button>
+      <button class="nav-pill active-tools-pill" onclick="switchTab('tools')" data-tab="tools">🛠️ Tools</button>
+      <button class="nav-pill" onclick="switchTab('coaches')" data-tab="coaches">👤 Coaches</button>
+      <button class="nav-pill" onclick="switchTab('manage')" data-tab="manage" style="display:none;">⚙️ Manage</button>
+    </div>
+  </nav>
+
+  <!-- OVERVIEW -->
+  <div id="tab-overview" class="section active">
+    <div class="stat-grid" id="overviewStats"></div>
+    <div id="leagueHighlights" style="margin-top:4px;"></div>
+    <div class="section-divider">📊 Breakdown</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Registrations by <span class="accent">Sport</span></div>
+        <div class="chart-wrap"><canvas id="sportPieChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Division <span class="accent">Breakdown</span></div>
+        <div class="chart-wrap"><canvas id="divisionBarChart"></canvas></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Baseball <span class="accent">Divisions</span></div>
+        <div class="chart-wrap-sm"><canvas id="bbDivChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Softball <span class="accent">Divisions</span></div>
+        <div class="chart-wrap-sm"><canvas id="sbDivChart"></canvas></div>
+      </div>
+    </div>
+    <!-- Registration Trends -->
+    <div class="section-divider">📈 Trends & Revenue</div>
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        Registration <span class="accent">Trends</span>
+        <div style="display:flex;gap:6px;margin-left:auto;">
+          <button id="trendBtn-count" class="btn btn-gold btn-sm" onclick="setTrendMode('count')" style="font-size:11px;padding:3px 10px;">Players</button>
+          <button id="trendBtn-revenue" class="btn btn-ghost btn-sm" onclick="setTrendMode('revenue')" style="font-size:11px;padding:3px 10px;">Revenue</button>
+        </div>
+      </div>
+      <div id="trendEstNote" style="display:none;font-size:11px;color:var(--gold);margin-bottom:8px;padding:6px 10px;background:rgba(245,166,35,0.08);border-radius:6px;border:1px solid rgba(245,166,35,0.2);">
+        ⚠️ Years marked <strong>est.</strong> use estimated revenue based on known registration fee structures. Re-run <code>process.py</code> after adding raw data to get exact figures.
+      </div>
+      <div class="chart-wrap-lg"><canvas id="regTrendsChart"></canvas></div>
+      <div id="regTrendLegend" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Revenue <span class="accent">Snapshot</span></div>
+      <div id="revenueStats" class="stat-grid" style="margin-bottom:0"></div>
+    </div>
+  </div>
+
+  <!-- YEAR OVER YEAR -->
+  <div id="tab-yoy" class="section">
+    <div class="yoy-subtab-bar">
+      <button class="yoy-sub-tab active" data-mode="alltime" onclick="setYoyMode('alltime')">📊 All Time (2022–)</button>
+      <button class="yoy-sub-tab" data-mode="yoy" onclick="setYoyMode('yoy')">⚡ Year-over-Year</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Total Registrations — <span class="accent">Year over Year</span></div>
+      <div class="chart-wrap-lg"><canvas id="yoyBarChart"></canvas></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Baseball <span class="accent">YoY</span></div>
+        <div class="chart-wrap"><canvas id="bbYoyChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Softball <span class="accent">YoY</span></div>
+        <div class="chart-wrap"><canvas id="sbYoyChart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">T-Ball <span class="accent">YoY</span></div>
+      <div class="two-col">
+        <div class="chart-wrap"><canvas id="tbYoyChart"></canvas></div>
+        <div id="yoyInsights" style="padding-left:8px; display:flex; flex-direction:column; justify-content:center; gap:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRATION TIMING -->
+  <div id="tab-timing" class="section">
+    <div class="card">
+      <div class="card-title">🗓️ Registration <span class="accent">Timing Analysis</span>
+        <span style="font-size:11px;color:var(--text3);font-weight:400;letter-spacing:0;">Spring seasons only · 2021–2026</span>
+      </div>
+      <div class="timing-legend">
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f97316;margin-right:4px;vertical-align:middle;"></span>2021 (209)</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#4a9eff;margin-right:4px;vertical-align:middle;"></span>2022 (216)</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f5a623;margin-right:4px;vertical-align:middle;"></span>2023 (175)</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10b981;margin-right:4px;vertical-align:middle;"></span>2024 (169)</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#9b7dff;margin-right:4px;vertical-align:middle;"></span>2025 (208)</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#2dd4bf;margin-right:4px;vertical-align:middle;"></span><strong>2026 (231)</strong></span>
+        <span style="margin-left:8px;color:var(--text3);">│</span>
+        <span style="color:var(--text3);font-size:10px;">📣 = FB post correlated with registration spike (2026 only)</span>
+      </div>
+      <div style="position:relative;width:100%;"><canvas id="timingCumulChart" height="330"></canvas></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px;margin-top:10px;" class="timing-cards">
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #f5a623;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">📣 Jan 9 — Opens</div>
+          <div style="font-size:9px;color:var(--text2);">Reach 1,316 · 20 shares → <strong>16 regs</strong> (peak). Echo effect 3 days.</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #10b981;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">🥎 Jan 24–25 — T-Ball Clinic</div>
+          <div style="font-size:9px;color:var(--text2);">Recap reach 476 → <strong>4 regs Jan 26</strong>. Clinics = same/next-day signups.</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #60a5fa;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">🏈 Jan 26 — Super Bowl Squares</div>
+          <div style="font-size:9px;color:var(--text2);">Reach 775 (Nov teaser: 1,512 · 43 shares). Community buzz through Feb.</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #14b8a6;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">🎟 Feb 5 — First Clinic</div>
+          <div style="font-size:9px;color:var(--text2);">Reach 766 · 11 shares → <strong>7 regs Feb 6</strong>. Most reliable reg driver.</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #f97316;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">⏰ Feb 14 — "2 Weeks Left"</div>
+          <div style="font-size:9px;color:var(--text2);">Reach 804 · 14 shares → <strong>10 regs Feb 26, 11 regs Feb 28</strong>.</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #9b7dff;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">❄️ Feb 23 — "63 Days" Hype</div>
+          <div style="font-size:9px;color:var(--text2);">Reach 568. Emotional post (not a reg ask) still drove <strong>10 regs Feb 26</strong>.</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:8px 10px;border-left:3px solid #ef4444;">
+          <div style="font-size:10px;font-weight:700;margin-bottom:2px;">⏰ Feb 28 — Final Early Bird</div>
+          <div style="font-size:9px;color:var(--text2);">Reach 260 → <strong>11 regs same day</strong>. Hard deadline + $25 penalty = strongest driver.</div>
+        </div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">📊 <span class="accent">Daily Volume</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;" id="timingDailyTabs">
+          <button class="btn btn-sm" style="background:rgba(45,212,191,0.15);border:1px solid #2dd4bf;color:#2dd4bf;" onclick="timingShowD('2026')">2026</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowD('2025')">2025</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowD('2024')">2024</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowD('2023')">2023</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowD('2022')">2022</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowD('2021')">2021</button>
+        </div>
+        <div style="position:relative;width:100%;"><canvas id="timingDailyChart" height="220"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🕐 <span class="accent">Hour of Day</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;" id="timingHourTabs">
+          <button class="btn btn-sm" style="background:rgba(45,212,191,0.15);border:1px solid #2dd4bf;color:#2dd4bf;" onclick="timingShowH('2026')">2026</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowH('2025')">2025</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowH('2024')">2024</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowH('2023')">2023</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowH('2022')">2022</button>
+          <button class="btn btn-sm btn-ghost" onclick="timingShowH('2021')">2021 ⚠</button>
+        </div>
+        <div style="position:relative;width:100%;"><canvas id="timingHourChart" height="220"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🗓️ <span class="accent">Milestone Comparison</span></div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead><tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">Year</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">Total</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">First</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">10%</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">25%</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">50%</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">75%</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">90%</th>
+            <th style="text-align:right;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);">Peak</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+              <td style="padding:7px 9px;font-weight:700;">2021</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">209</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--red);">Feb 19</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 24</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 1</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--red);">Mar 15</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 27</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Apr 6</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 15 (10)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+              <td style="padding:7px 9px;font-weight:700;">2022</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">216</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--red);">Jan 31</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 5</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 19</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--red);">Mar 2</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 14</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 31</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 13 (15)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+              <td style="padding:7px 9px;font-weight:700;">2023</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">175</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--red);">Feb 7</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 11</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 15</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 6</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 17</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 28</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 11 (17)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+              <td style="padding:7px 9px;font-weight:700;">2024</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">169</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Jan 13</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Jan 21</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 4</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 27</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 9</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Mar 15</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 1 (10)</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+              <td style="padding:7px 9px;font-weight:700;">2025</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">208</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Jan 10</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Jan 14</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Jan 24</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Feb 20</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 14</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Mar 21</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);">Jan 10 (15)</td>
+            </tr>
+            <tr style="background:rgba(45,212,191,0.05);">
+              <td style="padding:7px 9px;font-weight:700;color:#2dd4bf;">2026 ★</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">231</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Dec 16</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Jan 9</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Jan 16</td>
+              <td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Feb 6</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Feb 26</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Mar 8</td><td style="padding:7px 9px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:700;">Jan 9 (16)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:10px;color:var(--text3);margin-top:10px;">★ 2026 first reg Dec 16 (all are real signups). 2019 excluded from chart (incomplete season data — players still appear on individual timelines). Spring only — summer tracked separately. Social markers (📣⏰🎟) show FB posts correlated with 2026 registration spikes. Green = fastest, Red = slowest for each column.</div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div id="tab-timeline" class="section">
+    <div id="timelineContent"></div>
+  </div>
+
+  <!-- LEAGUE HEALTH -->
+  <div id="tab-health" class="section">
+
+    <!-- ACTION ITEMS + HEALTH OVERVIEW -->
+    <div id="healthActions"></div>
+
+    <!-- LEAGUE INTELLIGENCE CARD -->
+    <div id="leagueIntelCard" class="card" style="margin-bottom:16px;"></div>
+
+    <!-- RETENTION REPORT -->
+    <div class="card">
+      <div class="card-title">League <span class="accent">Retention</span> Report</div>
+      <p style="font-size:13px; color:var(--text2); margin-bottom:16px;">Retention is calculated by matching players year-over-year (first name + last initial + sport). <strong style="color:var(--gold);">Aged-out players</strong> are excluded from the eligible count.</p>
+      <div id="retentionContent"></div>
+    </div>
+
+    <!-- DIVISION HEALTH BARS + NEW/RETURNING -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Division <span class="accent">Capacity</span></div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:12px;">Target range shown in <span style="color:var(--gold);">amber</span>. Green = healthy, Red = low.</div>
+        <div id="healthBars"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">New vs <span class="accent">Returning</span></div>
+        <div class="chart-wrap"><canvas id="newReturnChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- DIVISION EXIT FUNNEL -->
+    <div class="card">
+      <div class="card-title">Division <span class="accent">Exit Funnel</span>
+        <div style="display:flex;gap:6px;margin-left:auto;">
+          <select id="funnelSport" class="draft-select" style="font-size:12px;padding:4px 8px;" onchange="renderFunnel()">
+            <option value="Baseball">Baseball</option>
+            <option value="Softball">Softball</option>
+          </select>
+          <select id="funnelYear" class="draft-select" style="font-size:12px;padding:4px 8px;" onchange="renderFunnel()">
+          </select>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Where did each division's players go the following season? Hover a flow for counts.</div>
+      <div id="funnelChart" style="min-height:260px;overflow-x:auto;"></div>
+    </div>
+
+    <!-- COHORT SURVIVAL + T-BALL PIPELINE -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Cohort <span class="accent">Survival</span></div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Of players who first registered in a given year, what % are still active each subsequent season?</div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;">
+          <button id="survBtn-Baseball" class="btn btn-gold btn-sm" onclick="setSurvSport('Baseball')" style="font-size:11px;">Baseball</button>
+          <button id="survBtn-Softball" class="btn btn-ghost btn-sm" onclick="setSurvSport('Softball')" style="font-size:11px;">Softball</button>
+          <button id="survBtn-T-Ball" class="btn btn-ghost btn-sm" onclick="setSurvSport('T-Ball')" style="font-size:11px;">T-Ball</button>
+        </div>
+        <div class="chart-wrap-lg"><canvas id="survivalChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">T-Ball <span class="accent">Pipeline</span></div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Of each T-Ball cohort, how many graduated to baseball or softball the following year?</div>
+        <div class="chart-wrap-lg"><canvas id="tballPipelineChart"></canvas></div>
+        <div id="tballGradStats" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- HEALTH SUMMARY -->
+    <div class="card">
+      <div class="card-title">Health <span class="accent">Summary</span></div>
+      <div id="healthSummary"></div>
+    </div>
+
+  </div>
+
+  <!-- ALL-STARS -->
+  <div id="tab-allstars" class="section">
+    <div class="card">
+      <div class="card-title">⭐ All-Stars <span class="accent">Eligible</span>
+        <span id="allStarYear" style="font-size:13px;color:var(--text2);font-family:'DM Sans';font-weight:400;margin-left:8px;"></span>
+      </div>
+      <p class="section-intro">Click any bracket to see eligible players. Eligibility is based on age as of May 1. Baseball only — T-Ball does not participate in All-Stars.</p>
+      <div class="stat-grid" id="allStarCards"></div>
+      <div id="allStarTopPerformers" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- COACHES + TEAMS -->
+  <!-- TEAMS -->
+  <div id="tab-teams" class="section">
+    <div class="filter-bar">
+      <select id="teamPageYear" class="draft-select" onchange="renderTeamsPage()"></select>
+      <select id="teamPageSport" class="draft-select" onchange="renderTeamsPage()">
+        <option value="all">All Sports</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Softball">Softball</option>
+        <option value="T-Ball">T-Ball</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;user-select:none;">
+        <input type="checkbox" id="teamPageCombine" onchange="renderTeamsPage()"
+          style="width:14px;height:14px;accent-color:var(--gold);cursor:pointer;">
+        Combine same-name teams
+      </label>
+      <span style="font-size:12px;color:var(--text2);margin-left:auto;">Click a team to expand its roster</span>
+    </div>
+    <div id="teamsPageGrid"></div>
+  </div>
+
+  <!-- COACHES -->
+  <div id="tab-coaches" class="section">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;">Coaching <span style="color:var(--gold);">Staff</span></div>
+      <button class="btn btn-gold btn-sm" onclick="coachAddNew()" style="margin-left:auto;">+ Add Coach</button>
+    </div>
+    <div id="coachRosterGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:24px;"></div>
+    <div id="coachAnalysisSection" style="display:none;">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <div class="card-title" style="margin:0;">Team <span class="accent">Retention</span></div>
+          <select id="coachChartYear" class="draft-select" style="font-size:12px;padding:4px 8px;margin-left:auto;" onchange="renderCoachRetentionChart()"></select>
+        </div>
+        <div style="height:180px;margin-bottom:16px;"><canvas id="coachRetentionChart"></canvas></div>
+        <div id="coachRetentionContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div id="tab-tools" class="section">
+    <div class="card" style="margin-bottom:0;overflow-y:auto;max-height:calc(100vh - 120px);">
+      <div class="card-title" style="font-size:15px;margin-bottom:12px;">⏱ Coaching <span class="accent">Tools</span></div>
+      <div id="coachingToolsPanel"></div>
+    </div>
+  </div>
+
+  <!-- 9-Pocket / Accuracy game — fullscreen overlay, shown during active game -->
+  <div id="pc-game-overlay" style="display:none;position:fixed;inset:0;z-index:2000;
+       background:var(--navy);overflow:hidden;flex-direction:column;">
+    <!-- Overlay header bar -->
+    <div id="pc-overlay-header" style="flex-shrink:0;display:flex;align-items:center;
+         gap:10px;padding:10px 14px;background:rgba(0,0,0,0.3);
+         border-bottom:1px solid rgba(255,255,255,0.08);">
+      <div id="pc-overlay-title" style="font-family:'Bebas Neue';font-size:17px;
+           color:#60a5fa;letter-spacing:.5px;flex:1;"></div>
+      <button onclick="pcEndGame()"
+        style="padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);
+               background:rgba(255,255,255,0.06);color:var(--text2);font-family:'DM Sans';
+               font-size:12px;cursor:pointer;">✕ End Game</button>
+    </div>
+    <!-- Scrollable game body — everything inside here -->
+    <div id="pc-overlay-body" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+         padding:10px 14px calc(16px + env(safe-area-inset-bottom,0px));
+         display:flex;flex-direction:column;align-items:center;gap:0;">
+      <!-- Stats bar -->
+      <div id="pc-overlay-stats" style="width:100%;max-width:360px;margin-bottom:8px;"></div>
+      <!-- Progress bar -->
+      <div style="width:100%;max-width:360px;height:4px;border-radius:2px;
+           background:rgba(255,255,255,.08);margin-bottom:8px;overflow:hidden;">
+        <div id="pc-progress-bar" style="height:100%;width:0%;background:#60a5fa;
+             border-radius:2px;transition:width .3s;"></div>
+      </div>
+      <!-- Target label -->
+      <div id="pc-target-label" style="text-align:center;font-size:12px;
+           color:var(--text2);margin-bottom:6px;width:100%;max-width:360px;"></div>
+      <!-- Result card — appears in-place ABOVE canvas, no layout shift -->
+      <div id="pc-result-card" style="display:none;width:100%;max-width:360px;
+           margin-bottom:8px;"></div>
+      <!-- Action row -->
+      <div id="pc-action-row" style="display:flex;gap:8px;margin-bottom:10px;
+           width:100%;max-width:360px;"></div>
+      <!-- Canvas — centered, never moves -->
+      <div style="position:relative;display:inline-block;">
+        <canvas id="pc-canvas" width="280" height="360"
+          style="border-radius:10px;background:rgba(0,0,0,.35);cursor:crosshair;
+                 border:1px solid rgba(255,255,255,.1);touch-action:none;display:block;">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOCIAL MEDIA -->
+  <div id="tab-social" class="section">
+    <div id="socialSection"></div>
+  </div>
+
+  <!-- EVALUATIONS -->
+  <div id="tab-evals" class="section">
+    <!-- Step 1: Setup -->
+    <div id="evalSavedSessions" style="display:none;"></div>
+    <div id="evalSetup">
+      <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:#fff;margin-bottom:4px;">
+        📋 Player <span style="color:var(--gold);">Evaluations</span>
+      </div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">
+        Choose your evaluation type, pick a division, mark attendance, then grade each player.
+      </div>
+
+      <!-- Eval Type Selector -->
+      <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+        <div id="evalTypeClinic"
+          onclick="evalSetType('clinic')"
+          style="flex:1;min-width:200px;padding:16px 18px;border-radius:12px;cursor:pointer;
+                 background:rgba(245,166,35,0.12);border:2px solid var(--gold);">
+          <div style="font-family:'Bebas Neue';font-size:18px;color:var(--gold);margin-bottom:4px;">⚾ Clinic Eval</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.4;">
+            Detailed drill-by-drill scoring. Best for practice clinics where you work through specific stations.
+          </div>
+        </div>
+        <div id="evalTypeEvalDay"
+          onclick="evalSetType('evalday')"
+          style="flex:1;min-width:200px;padding:16px 18px;border-radius:12px;cursor:pointer;
+                 background:rgba(255,255,255,0.03);border:2px solid var(--border);">
+          <div style="font-family:'Bebas Neue';font-size:18px;color:var(--text2);margin-bottom:4px;">📊 Evaluation Day</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.4;">
+            Simplified 1–5 scoring sheet. Fast, indoor-friendly. Based on the league's traditional eval format.
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="evalTypeInput" value="clinic">
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:20px;">
+
+        <div class="card" style="padding:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;">Sport</div>
+          <select id="evalSport" class="draft-select" style="width:100%;font-size:13px;padding:7px 10px;" onchange="evalFilterChanged()">
+            <option value="Baseball">Baseball</option>
+            <option value="Softball">Softball</option>
+            <option value="T-Ball">T-Ball</option>
+          </select>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;">Division</div>
+          <select id="evalDivision" class="draft-select" style="width:100%;font-size:13px;padding:7px 10px;" onchange="evalFilterChanged()">
+            <option value="Majors">Majors</option>
+            <option value="Minors">Minors</option>
+            <option value="Rookies">Rookies</option>
+            <option value="Senior">Senior</option>
+            <option value="12U">12U</option>
+            <option value="10U">10U</option>
+            <option value="Farm">Farm</option>
+          </select>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;">Season</div>
+          <select id="evalYear" class="draft-select" style="width:100%;font-size:13px;padding:7px 10px;" onchange="evalFilterChanged()">
+          </select>
+        </div>
+      </div>
+
+      <!-- Attendance panel -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+          <div class="card-title" style="margin-bottom:0;">Mark <span class="accent">Attendance</span></div>
+          <div style="font-size:12px;color:var(--text2);margin-left:0;">Click players who are present today</div>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="evalSelectAll()">Select All</button>
+            <button class="btn btn-ghost btn-sm" onclick="evalClearAll()">Clear</button>
+          </div>
+        </div>
+        <div id="evalAttendanceGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;"></div>
+        <!-- Write-in unregistered player -->
+        <div id="evalWriteInArea" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;display:none;">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Add unregistered player to this session:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <input id="evalWriteInFirst" type="text" placeholder="First name" class="draft-input"
+              style="flex:1;min-width:100px;font-size:13px;"
+              onkeydown="if(event.key==='Enter')evalAddWriteIn()">
+            <input id="evalWriteInLast" type="text" placeholder="Last name" class="draft-input"
+              style="flex:1;min-width:100px;font-size:13px;"
+              onkeydown="if(event.key==='Enter')evalAddWriteIn()">
+            <button class="btn btn-gold btn-sm" onclick="evalAddWriteIn()">+ Add</button>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="font-size:12px;color:var(--text2);white-space:nowrap;font-weight:600;">👤 Coach:</label>
+          <select id="evalCoach" class="draft-select" onchange="evalCoachChanged()"
+            style="flex:1;min-width:160px;font-size:13px;padding:6px 10px;">
+            <option value="">— Select coach —</option>
+          </select>
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span id="evalAttendCount" style="font-size:13px;color:var(--text2);">0 selected</span>
+          <button class="btn btn-ghost btn-sm" onclick="evalToggleWriteIn()" style="font-size:11px;">
+            ✏️ Write In Player
+          </button>
+          <button class="btn btn-gold" onclick="evalStartGrading()" style="margin-left:auto;padding:9px 24px;">
+            Start Evaluating →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Grading -->
+    <div id="evalGrading" style="display:none;">
+      <!-- Header bar -->
+      <div class="eval-header-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="evalBackToSetup()">← Back</button>
+        <div style="font-family:'Bebas Neue';font-size:22px;color:#fff;" id="evalGradingTitle">Evaluations</div>
+        <div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm eval-action-btn" onclick="ctOpenOverlay('ath')" title="Coaching Tools">⏱ Tools</button>
+          <button class="btn btn-ghost btn-sm eval-action-btn" onclick="evalExport()">📥 Export</button>
+          <button class="btn btn-ghost btn-sm eval-action-btn" onclick="openShareEvalModal(EVAL_SESSION.id||0)" id="evalShareBtn">↑ Share</button>
+          <button class="btn btn-danger btn-sm eval-action-btn" onclick="evalDeleteSession(EVAL_SESSION.id||0)" title="Delete">🗑</button>
+          <button class="btn btn-gold btn-sm eval-action-btn" onclick="evalCommit()">⬆ Draft</button>
+        </div>
+      </div>
+
+      <!-- Progress strip (mobile: dot nav + progress bar; desktop: player tabs) -->
+      <div id="evalProgressStrip" style="margin-bottom:10px;"></div>
+      <div id="evalPlayerTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;"></div>
+
+      <!-- Grading card — swipeable on mobile -->
+      <div class="card eval-grading-card" id="evalGradingCard"
+           ontouchstart="evalTouchStart(event)" ontouchend="evalTouchEnd(event)">
+        <div style="text-align:center;color:var(--text2);padding:20px;">Select a player above to begin</div>
+      </div>
+
+      <!-- Session summary — collapsed by default on mobile -->
+      <div class="card eval-summary-card" style="margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;"
+             onclick="toggleRankDetail('evalSummaryBody')">
+          <div class="card-title" style="font-size:15px;margin-bottom:0;">
+            Session <span class="accent">Summary</span>
+          </div>
+          <span style="font-size:11px;color:var(--text2);margin-left:auto;">▾</span>
+        </div>
+        <div id="evalSummaryBody" style="display:none;margin-top:12px;">
+          <div id="evalSummaryTable"></div>
+        </div>
+      </div>
+
+      <!-- My Draft Picks — ranked -->
+      <div class="card" id="evalPicksCard" style="margin-top:12px;display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+          <div class="card-title" style="margin-bottom:0;">🏆 My <span class="accent">Draft Picks</span></div>
+          <span style="font-size:11px;color:var(--text2);">Drag to reorder</span>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:11px;"
+                  onclick="evalSaveSession();toast('✓ Saved')">💾 Save</button>
+        </div>
+        <div id="evalPicksList" style="display:flex;flex-direction:column;gap:6px;"></div>
+        <div id="evalSelectTeamList" style="margin-top:16px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROSTER -->
+  <div id="tab-roster" class="section">
+    <div class="filter-bar">
+      <select id="filterYear" onchange="renderRoster()">
+        <option value="all">All Years</option>
+      </select>
+      <select id="filterSport" onchange="renderRoster()">
+        <option value="all">All Sports</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Softball">Softball</option>
+        <option value="T-Ball">T-Ball</option>
+      </select>
+      <select id="filterDiv" onchange="renderRoster()">
+        <option value="all">All Divisions</option>
+      </select>
+      <input type="text" id="filterSearch" placeholder="🔍  Search by name, city, or team…" oninput="_debouncedRosterSearch()"
+        style="flex:1;">
+      <span id="rosterCount" style="font-size:12px;color:var(--text2);white-space:nowrap;"></span>
+    </div>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="tbl-wrap">
+        <table id="rosterTable">
+          <thead>
+            <tr>
+              <th onclick="sortRoster('last')">Name ↕</th>
+              <th onclick="sortRoster('year')">Year ↕</th>
+              <th onclick="sortRoster('sport')">Sport ↕</th>
+              <th onclick="sortRoster('division')">Division ↕</th>
+              <th>City</th>
+              <th>Team</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rosterBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANAGE DATA -->
+  <div id="tab-manage" class="section">
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Upload <span class="accent">New Data</span></div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvFileInput').click()" ondragover="e=>e.preventDefault()" ondrop="handleDrop(event)">
+          <div class="upload-icon">📂</div>
+          <div class="upload-text">Drop a file or click to browse</div>
+          <div class="upload-sub">Supports Crossbar CSV or SportsEngine Excel format</div>
+          <div class="upload-formats">
+            <span class="fmt-badge">CSV</span>
+            <span class="fmt-badge">XLSX</span>
+          </div>
+        </div>
+        <input type="file" id="csvFileInput" accept=".csv,.xlsx" style="display:none" onchange="handleFileUpload(this)">
+        <div id="uploadStatus" style="margin-top:12px; font-size:13px; color:var(--text2);"></div>
+        <hr class="divider">
+        <div class="card-title-sm">Upload Options</div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:12px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+            <input type="radio" name="uploadMode" value="overwrite" checked> Overwrite existing season
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+            <input type="radio" name="uploadMode" value="add"> Add as new season
+          </label>
+        </div>
+        <select id="uploadSport" style="background:var(--card); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:8px; font-size:13px; width:100%; font-family:'DM Sans';">
+          <option value="baseball">Baseball</option>
+          <option value="softball">Softball</option>
+          <option value="tball">T-Ball</option>
+        </select>
+        <div style="margin-top:10px;">
+          <input type="number" id="uploadYear" placeholder="Season year (e.g. 2026)" style="background:var(--card); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:8px; font-size:13px; width:100%; font-family:'DM Sans';">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Data <span class="accent">Summary</span></div>
+        <div id="dataSummary"></div>
+        <hr class="divider">
+        <div class="card-title-sm">Danger Zone</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <button class="btn btn-danger btn-sm" onclick="clearYear(years()[years().length-1])">🗑 Clear Latest Year Data</button>
+          <button class="btn btn-danger btn-sm" onclick="clearYear(years()[years().length-2])">🗑 Clear Prior Year Data</button>
+          <button class="btn btn-danger btn-sm" onclick="clearAllData()">⚠ Reset Everything</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Export <span class="accent">Data</span></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('all')">📥 Export All (CSV)</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('latest')">📥 Export Latest Year</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('prev')">📥 Export Prior Year</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('baseball-latest')">📥 Baseball (Latest)</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('softball-latest')">📥 Softball (Latest)</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('tball-latest')">📥 T-Ball (Latest)</button>
+      </div>
+    </div>
+
+    <!-- ADMIN-ONLY: Feature Flags Panel — invisible to all non-admin users -->
+    <div id="adminFlagsPanel" style="display:none;">
+      <div class="card" style="margin-top:4px;border:1px solid rgba(245,166,35,0.3);background:rgba(245,166,35,0.04);">
+        <div class="card-title">🔐 Visibility <span class="accent">Controls</span></div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5;">
+          Control what other users can see. These settings apply to all users.<br>
+          <span style="color:var(--gold);font-weight:600;">You always see everything as admin.</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">📝 Evaluations Tab</div>
+            <div style="font-size:11px;color:var(--text2);">Show the Evals tab to all logged-in users</div>
+          </div>
+          <div id="flagToggle_showEvals" onclick="featureFlagsToggle('showEvals')"
+            style="width:40px;height:22px;border-radius:11px;cursor:pointer;flex-shrink:0;position:relative;transition:background .2s;background:rgba(255,255,255,0.12);">
+            <div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">⚔ Player Compare</div>
+            <div style="font-size:11px;color:var(--text2);">Compare button in the stats modal</div>
+          </div>
+          <div id="flagToggle_showCompare" onclick="featureFlagsToggle('showCompare')"
+            style="width:40px;height:22px;border-radius:11px;cursor:pointer;flex-shrink:0;position:relative;transition:background .2s;background:rgba(255,255,255,0.12);">
+            <div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">📊 League Rankings</div>
+            <div style="font-size:11px;color:var(--text2);">Rankings section inside the stats modal</div>
+          </div>
+          <div id="flagToggle_showRankings" onclick="featureFlagsToggle('showRankings')"
+            style="width:40px;height:22px;border-radius:11px;cursor:pointer;flex-shrink:0;position:relative;transition:background .2s;background:rgba(255,255,255,0.12);">
+            <div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">🏃 Off-Season Activity</div>
+            <div style="font-size:11px;color:var(--text2);">Activity log, clinic check-ins, box scores, Add Stats</div>
+          </div>
+          <div id="flagToggle_showActivity" onclick="featureFlagsToggle('showActivity')"
+            style="width:40px;height:22px;border-radius:11px;cursor:pointer;flex-shrink:0;position:relative;transition:background .2s;background:rgba(255,255,255,0.12);">
+            <div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+
+        <!-- Show Player Stats row -->
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">📊 Player Stats</div>
+            <div style="font-size:11px;color:var(--text2);">Show OPS, rankings, performance badges and position history</div>
+          </div>
+          <div id="flagToggle_showPlayerStats" onclick="featureFlagsToggle('showPlayerStats')"
+            style="width:40px;height:22px;border-radius:11px;cursor:pointer;flex-shrink:0;position:relative;transition:background .2s;background:rgba(255,255,255,0.12);">
+            <div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+
+        <!-- Preview Mode row -->
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;margin-top:4px;
+            border-top:2px dashed rgba(249,115,22,0.3);background:rgba(249,115,22,0.04);
+            border-radius:0 0 8px 8px;padding-left:10px;padding-right:10px;">
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:700;color:var(--orange);">👁 Preview as Regular User</div>
+            <div style="font-size:11px;color:var(--text2);">See the app exactly as other users see it. Tab-only — exits on close.</div>
+          </div>
+          <div id="flagToggle_previewMode" onclick="previewModeToggle()"
+            style="width:40px;height:22px;border-radius:11px;cursor:pointer;flex-shrink:0;position:relative;transition:background .2s;background:rgba(255,255,255,0.12);">
+            <div style="position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<!-- DRAFT TAB -->
+<div id="tab-draft" class="section">
+
+  <!-- SETUP PHASE -->
+  <div id="draftPhase_setup">
+    <!-- Phase stepper -->
+    <div class="draft-stepper">
+      <div class="draft-step active"><span class="draft-step-dot">1</span><span class="draft-step-label">Setup</span></div>
+      <div class="draft-step-line"></div>
+      <div class="draft-step"><span class="draft-step-dot">2</span><span class="draft-step-label">Draft</span></div>
+      <div class="draft-step-line"></div>
+      <div class="draft-step"><span class="draft-step-dot">3</span><span class="draft-step-label">Complete</span></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:#fff;">🏆 Draft <span style="color:var(--gold);">Board</span></div>
+        <div style="font-size:13px;color:var(--text2);">Configure your draft, then pick players for each team</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="draftSave()" title="Save current setup">💾 Save Draft</button>
+        <button class="btn btn-ghost btn-sm" onclick="initDraft()" title="Reset to defaults">↺ Reset</button>
+      </div>
+    </div>
+    <div id="draftSetupContent"></div>
+  </div>
+
+  <!-- DRAFT BOARD PHASE -->
+  <div id="draftPhase_draft" style="display:none;">
+    <!-- Phase stepper -->
+    <div class="draft-stepper" style="margin-bottom:0;padding:8px 14px 4px;">
+      <div class="draft-step"><span class="draft-step-dot">1</span><span class="draft-step-label">Setup</span></div>
+      <div class="draft-step-line active-line"></div>
+      <div class="draft-step active"><span class="draft-step-dot">2</span><span class="draft-step-label">Drafting</span></div>
+      <div class="draft-step-line"></div>
+      <div class="draft-step"><span class="draft-step-dot">3</span><span class="draft-step-label">Complete</span></div>
+    </div>
+    <!-- Compact sticky header — timer + on-the-clock + actions -->
+    <div class="draft-sticky-header" style="padding:8px 14px;gap:10px;">
+      <!-- Timer -->
+      <div class="draft-timer-block" style="padding:4px 12px;min-width:64px;">
+        <div style="font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;">Timer</div>
+        <div id="draftTimerDisplay" class="draft-timer-num" style="font-size:24px;">0:00</div>
+      </div>
+      <!-- On the clock -->
+      <div class="draft-clock-info" style="flex-shrink:0;">
+        <div id="draftClockTeam" class="draft-clock-team" style="font-size:14px;">Loading...</div>
+        <div id="draftPickInfo" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:1px;"></div>
+      </div>
+      <!-- Pick order chips (scrollable, expands to fill) — hidden on mobile -->
+      <div style="flex:1;overflow:hidden;min-width:0;" class="draft-pick-strip-wrap">
+        <div style="font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Up Next</div>
+        <div id="draftOrderStrip" class="draft-order-strip" style="gap:4px;overflow-x:auto;padding-bottom:2px;"></div>
+      </div>
+      <!-- Actions -->
+      <div class="draft-header-actions" style="flex-shrink:0;display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+        <!-- Dashboard toggle — mobile only -->
+        <button class="btn btn-ghost btn-sm draft-dash-btn" onclick="toggleDraftDashboard()" style="font-size:11px;padding:4px 10px;" title="Pick order &amp; breakdown">📋</button>
+        <button class="btn btn-ghost btn-sm" onclick="openTVDisplay()" style="font-size:11px;padding:4px 10px;" title="Open TV board on this laptop">💻</button>
+        <button class="btn btn-ghost btn-sm" onclick="openMobileTVDisplay()" style="font-size:11px;padding:4px 10px;" title="Open mobile-friendly TV board">📱</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetDraft()" style="font-size:11px;padding:4px 10px;" title="Reset draft">↺</button>
+        <button class="btn btn-ghost btn-sm" id="draftUndoBtn" onclick="draftUndoPick()" style="font-size:11px;padding:4px 10px;color:#f59e0b;border-color:rgba(245,158,11,.3);" title="Undo last pick">↩ Undo</button>
+        <button class="btn btn-gold btn-sm" onclick="completeDraft()" style="font-size:11px;padding:4px 10px;">✓ End</button>
+      </div>
+    </div>
+
+    <!-- Mobile dashboard drawer (pick strip + top 3) — hidden by default on mobile -->
+    <div id="draftDashboardDrawer" style="
+      display:none;
+      background:rgba(10,18,30,0.98);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      padding:10px 14px;
+      animation:fadeSlideDown .18s ease both;">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="flex:1;min-width:180px;">
+          <div style="font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Up Next</div>
+          <div id="draftOrderStripMobile" class="draft-order-strip" style="gap:4px;overflow-x:auto;padding-bottom:2px;flex-wrap:nowrap;"></div>
+        </div>
+        <div id="draftTop3" style="display:none;flex-shrink:0;max-width:320px;"></div>
+      </div>
+    </div>
+
+
+
+    <!-- Main draft layout -->
+    <div class="draft-layout">
+      <!-- Left: Player board -->
+      <div class="draft-board-main">
+        <!-- Search + counts -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+          <div style="font-family:'Bebas Neue';font-size:20px;color:var(--gold);">Available Players</div>
+          <input type="text" id="draftSearch" placeholder="🔍 Filter by name or city…"
+            oninput="_debouncedDraftSearch()"
+            style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;font-size:13px;font-family:'DM Sans';outline:none;min-width:200px;">
+          <span id="draftAvailableCount" style="font-size:12px;color:var(--text2);margin-left:auto;"></span>
+        </div>
+
+        <!-- Available grid -->
+        <div id="draftAvailableGrid" class="draft-available-grid"></div>
+
+        <!-- Drafted section (collapsible, closed by default) -->
+        <details style="margin-top:16px;">
+          <summary style="cursor:pointer;font-family:'Bebas Neue';font-size:16px;color:var(--text2);margin-bottom:8px;user-select:none;padding:6px 0;">
+            ▸ Drafted Players <span id="draftedCount" style="color:var(--gold);">0</span>
+          </summary>
+          <div id="draftDraftedGrid" class="draft-drafted-grid"></div>
+        </details>
+      </div>
+
+      <!-- Right: Team rosters -->
+      <div class="draft-board-sidebar">
+
+        <div style="font-family:'Bebas Neue';font-size:20px;margin-bottom:12px;color:#fff;">Team <span style="color:var(--gold);">Rosters</span></div>
+        <div id="draftRosters" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- COMPLETE PHASE -->
+  <div id="draftPhase_complete" style="display:none;">
+    <!-- Phase stepper -->
+    <div class="draft-stepper">
+      <div class="draft-step done"><span class="draft-step-dot">✓</span><span class="draft-step-label">Setup</span></div>
+      <div class="draft-step-line active-line"></div>
+      <div class="draft-step done"><span class="draft-step-dot">✓</span><span class="draft-step-label">Draft</span></div>
+      <div class="draft-step-line active-line"></div>
+      <div class="draft-step active"><span class="draft-step-dot">3</span><span class="draft-step-label">Complete</span></div>
+    </div>
+    <div style="text-align:center;padding:32px 0 24px;">
+      <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+      <div style="font-family:'Bebas Neue';font-size:40px;color:var(--gold);letter-spacing:2px;">Draft Complete!</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:4px;">Review rosters, export or print, then confirm to update the dashboard.</div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-title">Draft <span class="accent">Stats</span></div>
+        <div id="draftResultStats"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Export <span class="accent">Rosters</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-ghost" onclick="exportDraftCSV()" style="justify-content:flex-start;gap:10px;">
+            📄 Download Roster CSV
+          </button>
+          <button class="btn btn-ghost" onclick="printDraftRosters()" style="justify-content:flex-start;gap:10px;">
+            🖨 Print / Save as PDF
+          </button>
+          <div style="border-top:1px solid var(--border);margin:4px 0;"></div>
+          <button class="btn btn-primary" onclick="confirmAndUpdateTeams()" style="justify-content:flex-start;gap:10px;" title="Applies these team names and rosters to the League dashboard">
+            ✓ Finalize — Apply Rosters to League
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="resetDraft()" style="margin-top:4px;color:var(--red);">
+            ↺ Start New Draft
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Final <span class="accent">Rosters</span></div>
+      <div id="draftResultRosters" class="draft-result-grid"></div>
+    </div>
+  </div>
+
+</div><!-- /draft tab -->
+
+</div><!-- /wrap -->
+
+<!-- ADD PLAYER MODAL -->
+<div class="modal-overlay" id="addPlayerModal">
+  <div class="modal">
+    <div class="modal-title">Add Player Manually</div>
+    <div class="form-grid">
+      <div class="form-group"><label>First Name</label><input type="text" id="ap_first" placeholder="First"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" id="ap_last" placeholder="Last"></div>
+      <div class="form-group"><label>Date of Birth</label><input type="date" id="ap_dob"></div>
+      <div class="form-group"><label>Gender</label>
+        <select id="ap_gender">
+          <option value="">Unknown</option><option value="Male">Male</option><option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Sport</label>
+        <select id="ap_sport" onchange="updateDivDropdown()">
+          <option value="Baseball">Baseball</option>
+          <option value="Softball">Softball</option>
+          <option value="T-Ball">T-Ball</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Division (auto-calc from DOB)</label>
+        <select id="ap_div">
+          <option value="Majors">Majors</option>
+          <option value="Minors">Minors</option>
+          <option value="Rookies">Rookies</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Year</label>
+        <select id="ap_year">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+        </select>
+      </div>
+      <div class="form-group"><label>City</label><input type="text" id="ap_city" placeholder="Lunenburg"></div>
+      <div class="form-group"><label>Team</label><input type="text" id="ap_team" placeholder="Team name"></div>
+      <div class="form-group"><label>Registration Fee</label><input type="number" id="ap_amount" placeholder="0.00" step="0.01"></div>
+      <div class="form-group full draft-hide-positions" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
+          <input type="checkbox" id="ap_pitching" style="width:16px;height:16px;cursor:pointer;">
+          &#x26BE; Pitching Experience
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
+          <input type="checkbox" id="ap_catching" style="width:16px;height:16px;cursor:pointer;">
+          &#127919; Catching Experience
+        </label>
+      </div>
+      <div class="form-group full"><label>&#11088; All-Star Years <span style="font-weight:400;color:var(--text2);font-size:12px;">(comma-separated, e.g. 2023, 2024)</span></label>
+        <input type="text" id="ap_allstar_years" placeholder="e.g. 2023, 2024">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('addPlayerModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addPlayer()">Add Player</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-title">Upload Registration Data</div>
+    <p style="font-size:13px; color:var(--text2); margin-bottom:16px;">Upload a Crossbar CSV export. The system will auto-detect columns for Last, First, Birthdate, Price, Total, City, Team, Email.</p>
+    <div class="upload-zone" onclick="document.getElementById('csvFileInput2').click()" style="margin-bottom:16px;">
+      <div class="upload-icon">📂</div>
+      <div class="upload-text">Click to select file</div>
+      <div class="upload-formats">
+        <span class="fmt-badge">CSV</span>
+        <span class="fmt-badge">XLSX</span>
+      </div>
+    </div>
+    <input type="file" id="csvFileInput2" accept=".csv" style="display:none" onchange="handleModalUpload(this)">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Sport</label>
+        <select id="mu_sport">
+          <option value="Baseball">Baseball</option>
+          <option value="Softball">Softball</option>
+          <option value="T-Ball">T-Ball</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Season Year</label>
+        <input type="number" id="mu_year" value="2026" onfocus="if(!this.dataset.set){this.value=new Date().getFullYear();this.dataset.set=1;}">
+      </div>
+      <div class="form-group full">
+        <label>Mode</label>
+        <select id="mu_mode">
+          <option value="add">Add to existing data</option>
+          <option value="replace">Replace this sport/year combo</option>
+        </select>
+      </div>
+    </div>
+    <div id="uploadPreview" style="margin-top:12px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('uploadModal')">Cancel</button>
+      <button class="btn btn-primary" id="uploadConfirmBtn" onclick="confirmUpload()" style="display:none">Confirm Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PLAYER MODAL -->
+<div class="modal-overlay" id="editPlayerModal">
+  <div class="modal">
+    <div class="modal-title">Edit Player</div>
+    <input type="hidden" id="ep_idx">
+    <div class="form-grid">
+      <div class="form-group"><label>First Name</label><input type="text" id="ep_first"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" id="ep_last"></div>
+      <div class="form-group"><label>Gender</label>
+        <select id="ep_gender"><option value="">Unknown</option><option value="Male">Male</option><option value="Female">Female</option></select>
+      </div>
+      <div class="form-group"><label>Sport</label>
+        <select id="ep_sport"><option value="Baseball">Baseball</option><option value="Softball">Softball</option><option value="T-Ball">T-Ball</option></select>
+      </div>
+      <div class="form-group"><label>Division</label>
+        <select id="ep_div">
+          <option>Majors</option><option>Minors</option><option>Rookies</option>
+          <option>Senior</option><option>12U</option><option>10U</option><option>Farm</option><option>T-Ball</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Year</label>
+        <select id="ep_year">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+        </select>
+      </div>
+      <div class="form-group"><label>City</label><input type="text" id="ep_city"></div>
+      <div class="form-group">
+        <label>Team <span style="font-weight:400;color:var(--text2);font-size:11px;">— auto-fills from this year's teams</span></label>
+        <input type="text" id="ep_team" list="ep_team_datalist" autocomplete="off" placeholder="Type or select team…">
+        <datalist id="ep_team_datalist"></datalist>
+      </div>
+      <div class="form-group"><label>Amount</label><input type="number" id="ep_amount" step="0.01"></div>
+      <div class="form-group full draft-hide-positions" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
+          <input type="checkbox" id="ep_pitching" style="width:16px;height:16px;cursor:pointer;">
+          ⚾ Pitching Experience
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
+          <input type="checkbox" id="ep_catching" style="width:16px;height:16px;cursor:pointer;">
+          🎯 Catching Experience
+        </label>
+      </div>
+      <div class="form-group full"><label>⭐ All-Star Years <span style="font-weight:400;color:var(--text2);font-size:12px;">(comma-separated, e.g. 2023, 2024)</span></label>
+        <input type="text" id="ep_allstar_years" placeholder="e.g. 2023, 2024">
+      </div>
+      <div class="form-group full draft-hide-positions"><label>🎯 Preferred Positions <span style="font-weight:400;color:var(--text2);font-size:12px;">(comma-separated, e.g. P, C, SS)</span></label>
+        <input type="text" id="ep_positions" placeholder="e.g. P, C, SS, 1B">
+      </div>
+      <div class="form-group">
+        <label>📊 Player Grade <span style="font-weight:400;color:var(--text2);font-size:12px;">(manual, if no stats)</span></label>
+        <select id="ep_grade">
+          <option value="">— Auto from stats —</option>
+          <option value="A+">A+ (Elite)</option>
+          <option value="A">A (Excellent)</option>
+          <option value="B+">B+ (Very Good)</option>
+          <option value="B">B (Good)</option>
+          <option value="C+">C+ (Above Avg)</option>
+          <option value="C">C (Average)</option>
+          <option value="D">D (Below Avg)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Add Season section -->
+    <div style="margin:14px 0 10px;padding:14px;background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.2);border-radius:10px;">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#60a5fa;margin-bottom:8px;">➕ Add Another Season for this Player</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;">Creates a new registration entry — useful for returning players across years or divisions.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <label style="font-size:10px;color:var(--text2);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;">Year</label>
+          <select id="ep_add_year" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;">
+            <option value="2026">2026</option><option value="2025">2025</option>
+            <option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--text2);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;">Division</label>
+          <select id="ep_add_div" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;">
+            <option>Majors</option><option>Minors</option><option>Rookies</option>
+            <option>Farm</option><option>T-Ball</option><option>Senior</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--text2);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;">Sport</label>
+          <select id="ep_add_sport" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;">
+            <option>Baseball</option><option>Softball</option><option>T-Ball</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div>
+          <label style="font-size:10px;color:var(--text2);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;">Team</label>
+          <input type="text" id="ep_add_team" list="ep_add_team_datalist" autocomplete="off" placeholder="Team name (optional)"
+            style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;box-sizing:border-box;">
+          <datalist id="ep_add_team_datalist"></datalist>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--text2);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;">Amount ($)</label>
+          <input type="number" id="ep_add_amount" placeholder="0" value="0"
+            style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;box-sizing:border-box;">
+        </div>
+      </div>
+      <button onclick="addSeasonForPlayer()" class="btn btn-primary btn-sm" style="width:100%;font-size:12px;padding:9px;">➕ Add This Season</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('editPlayerModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER JOURNEY MODAL -->
+<div class="modal-overlay" id="journeyModal">
+  <div class="modal" style="max-width:600px;padding:0;overflow:hidden;display:flex;flex-direction:column;max-height:85vh;">
+
+    <!-- Header -->
+    <div style="padding:16px 20px 0;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <!-- Headshot / silhouette -->
+          <div id="journeyHeadshotWrap" style="position:relative;width:64px;height:64px;border-radius:50%;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px solid var(--gold);box-shadow:0 0 0 3px rgba(245,166,35,0.2);" title="Click to update photo" onclick="openPhotoForCurrentPlayer()" >
+            <div id="journeyHeadshotImg" style="width:100%;height:100%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg" style="opacity:0.35;">
+                <circle cx="24" cy="18" r="9" fill="#94a3b8"/>
+                <ellipse cx="24" cy="42" rx="16" ry="10" fill="#94a3b8"/>
+              </svg>
+            </div>
+            <!-- Camera hint overlay -->
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .15s;display:flex;align-items:center;justify-content:center;"
+              onmouseover="this.style.background='rgba(0,0,0,0.5)';this.querySelector('span').style.opacity='1'"
+              onmouseout="this.style.background='rgba(0,0,0,0)';this.querySelector('span').style.opacity='0'">
+              <span style="font-size:18px;opacity:0;transition:opacity .15s;pointer-events:none;">📷</span>
+            </div>
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;transition:background .2s;" onmouseover="this.style.background='rgba(0,0,0,0.45)'" onmouseout="this.style.background='rgba(0,0,0,0)'">
+              <span style="font-size:10px;color:#fff;opacity:0;pointer-events:none;" id="journeyHeadshotHint">📷</span>
+            </div>
+          </div>
+          <input type="file" id="journeyHeadshotInput" accept="image/*" style="display:none">
+          <div>
+            <div id="journeyPlayerNameplate" style="display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 8px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">
+              <span id="journeyPlayerName" style="font-family:'Bebas Neue';font-size:clamp(18px,4vw,26px);color:#fff;letter-spacing:1px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;"></span>
+              <span id="journeyPlayerPosition" style="font-family:'Bebas Neue';font-size:16px;color:var(--text2);letter-spacing:.5px;"></span>
+            </div>
+            <div id="journeyPlayerMeta" style="font-size:11px;color:var(--text2);margin-top:3px;padding-left:4px;"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:4px;">
+        <button class="tab active" id="jTab-journey" onclick="jSwitchTab('journey')">Journey</button>
+        <button class="tab" id="jTab-stats" onclick="jSwitchTab('stats')">Stats</button>
+        <button class="tab" id="jTab-evals" onclick="jSwitchTab('evals')" style="display:none;">Evals</button>
+      </div>
+    </div>
+
+    <!-- Scrollable body -->
+    <div style="flex:1;overflow-y:auto;padding:16px 20px;min-height:0;">
+      <div id="jPanel-journey">
+        <div id="journeyContent"></div>
+        <div id="journeyPitchHistory"></div>
+        <div id="journeyBoxScoreSection" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:none;">
+          <div style="font-size:10px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">📋 Box Score Screenshots</div>
+          <div id="journeyBoxScores" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:36px;"></div>
+        </div>
+      </div>
+      <div id="jPanel-stats" style="display:none;">
+        <div id="journeyStatsLeaderBadges" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;"></div>
+        <div id="journeyStatsContent"></div>
+      </div>
+      <div id="jPanel-evals" style="display:none;">
+        <div id="journeyEvalsContent"></div>
+      </div>
+    </div>
+
+    <!-- Footer — Add Stats: admin or showActivity only -->
+    <div id="journeyAddStatsFooter" style="padding:12px 20px;border-top:1px solid var(--border);flex-shrink:0;display:none;">
+      <button class="btn btn-ghost btn-sm"
+        style="border-color:rgba(96,165,250,.4);color:#60a5fa;"
+        onclick="openManualStats()">✏️ Add Stats</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- TEAM MODAL -->
+<div class="modal-overlay" id="teamModal">
+  <div class="modal" style="max-width:640px;max-height:88vh;overflow-y:auto;">
+    <div class="team-modal-header">
+      <div class="modal-title" id="teamModalTitle">Team</div>
+      <div style="font-size:12px;color:var(--text2);" id="teamModalMeta"></div>
+    </div>
+    <div class="team-name-edit">
+      <span style="font-size:12px;color:var(--text2);white-space:nowrap;font-weight:600;">RENAME TEAM:</span>
+      <input type="text" id="teamNameInput" placeholder="Team name">
+      <button class="btn btn-gold btn-sm" onclick="saveTeamName()">Save & Update All</button>
+    </div>
+    <div class="team-name-edit" style="margin-top:8px;">
+      <span style="font-size:12px;color:var(--text2);white-space:nowrap;font-weight:600;">CORRECT YEAR:</span>
+      <select id="teamYearSelect" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;">
+        <option value="2026">2026</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+      </select>
+      <button class="btn btn-sm" style="background:var(--accent2,#e67e22);color:#fff;" onclick="saveTeamYear()">Move All to Year</button>
+    </div>
+
+    <!-- Coach section — same layout as draft setup -->
+    <div style="padding:14px 0 12px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:14px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);font-weight:700;margin-bottom:10px;">Coaching Staff</div>
+      <div id="teamCoachRows" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <button class="btn btn-ghost btn-sm" onclick="teamAddAssistantRow()" style="margin-top:10px;font-size:11px;align-self:flex-start;">+ Add Assistant</button>
+    </div>
+
+    <div id="teamPlayerList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('teamModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAT DETAIL MODAL -->
+<div class="modal-overlay" id="statDetailModal">
+  <div class="modal" style="max-width:580px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-title" id="statDetailTitle">Trend</div>
+    <div id="statDetailContent"></div>
+    <div class="stat-detail-chart-wrap"><canvas id="statDetailChart"></canvas></div>
+    <div id="statDetailTable"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('statDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ALL-STAR DETAIL MODAL -->
+<div class="modal-overlay" id="allStarDetailModal">
+  <div class="modal" style="max-width:640px;max-height:85vh;overflow-y:auto;">
+    <div class="modal-title" id="allStarDetailTitle">All-Stars</div>
+    <div id="allStarDetailContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('allStarDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- DIVISION DETAIL MODAL -->
+<div class="modal-overlay" id="divDetailModal" style="z-index:1200;">
+  <div class="modal" style="max-width:680px;max-height:88vh;overflow-y:auto;">
+    <div class="modal-title" id="divDetailTitle">Division</div>
+    <div id="divDetailContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('divDetailModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- PLAYER STATS MODAL -->
+<div class="modal-overlay" id="statsModal" style="z-index:1500;">
+  <div class="modal" style="max-width:760px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div class="modal-title" id="statsModalTitle" style="flex:1;margin-bottom:0;">Player Stats</div>
+      <div id="statsCompareSearch" style="display:none;align-items:center;gap:6px;">
+        <input id="statsCompareInput" type="text" placeholder="Type name to compare…"
+          oninput="statsCompareSearch(this.value)"
+          style="padding:6px 10px;border-radius:7px;border:1px solid var(--border);background:var(--card);color:#fff;font-size:13px;width:180px;">
+        <button onclick="statsClearCompare()" title="Clear compare" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text2)'">✕</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="statsCompareBtn" onclick="statsToggleCompare()"
+        title="Compare with another player" style="font-size:12px;padding:5px 12px;">⚔ Compare</button>
+    </div>
+    <div id="statsCompareDropdown" style="display:none;position:relative;"></div>
+    <div id="statsModalContent"></div>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-ghost" onclick="closeModal('statsModal')">Close</button>
+      <div id="statsModalFooterBtns" style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAFT CONFIRM PICK MODAL -->
+<div class="modal-overlay" id="draftConfirmModal">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <div style="font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Confirm Pick</div>
+    <div id="draftConfirmTeamName" style="display:inline-block;padding:6px 20px;border-radius:8px;font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;color:#fff;margin-bottom:4px;"></div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">is selecting</div>
+    <div id="draftConfirmPlayerName" style="font-family:'Bebas Neue';font-size:32px;color:#fff;letter-spacing:1px;margin-bottom:10px;"></div>
+    <div id="draftConfirmBadges" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;"></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn btn-ghost" onclick="closeModal('draftConfirmModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="draftExecutePick()" style="font-size:15px;padding:10px 28px;">✓ Confirm Pick</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script src="lybs_logos.js"></script>
+  <script src="draft.js"></script>
+  <script src="gc_stats.js"></script>
+  <script src="stats_module.js"></script>
+  <!-- social_module.js is lazy-loaded on first visit to the Social tab -->
+  <!-- Coach name datalist — populated by renderCoachDatalist() -->
+  <datalist id="coachDatalist"></datalist>
+
+</div><!-- /appRoot -->
+  <!-- TEAM CLAIM MODAL -->
+  <div id="teamClaimModal" class="modal-overlay">
+    <div class="modal" style="max-width:480px;">
+      <div class="modal-title" style="margin-bottom:6px;">🏟 Claim Your Teams</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">
+        Which teams have you coached in this league?
+      </div>
+      <div id="teamClaimContent"></div>
+    </div>
+  </div>
+
+  <!-- SHARE EVAL MODAL -->
+  <div id="shareEvalModal" class="modal-overlay">
+    <div class="modal" style="max-width:400px;">
+      <div class="modal-title" style="margin-bottom:6px;">↑ Share Evaluation</div>
+      <div id="shareEvalContent"></div>
+    </div>
+  </div>
+
+  <!-- SHARE DRAFT MODAL -->
+  <div id="shareDraftModal" class="modal-overlay">
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-title" style="margin-bottom:6px;">↑ Share Mock Draft</div>
+      <div id="shareDraftContent"></div>
+    </div>
+  </div>
+
+<!-- GC STATS IMPORT MODAL -->
+<div class="modal-overlay" id="gcStatsModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">📊 Import GameChanger Stats</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">
+      Upload a GameChanger team season CSV export. Stats will be merged into player profiles and synced to the cloud link automatically.
+    </p>
+
+    <div class="form-grid" style="margin-bottom:14px;">
+      <div class="form-group">
+        <label>Season Year</label>
+        <input type="number" id="gcStats_year" value="2025" style="width:100%;">
+      </div>
+      <div class="form-group">
+        <label>Team Name (for reference)</label>
+        <input type="text" id="gcStats_team" placeholder="e.g. Leominster Majors" style="width:100%;">
+      </div>
+    </div>
+
+    <div class="upload-zone" onclick="document.getElementById('gcStatsFileInput').click()"
+         ondragover="event.preventDefault()" ondrop="event.preventDefault();document.getElementById('gcStatsFileInput').files=event.dataTransfer.files;handleGCStatsFile(document.getElementById('gcStatsFileInput'))"
+         style="margin-bottom:14px;cursor:pointer;">
+      <div class="upload-icon">📂</div>
+      <div class="upload-text">Click to select GameChanger CSV</div>
+      <div class="upload-formats">
+        <span class="fmt-badge">CSV</span>
+      </div>
+    </div>
+    <input type="file" id="gcStatsFileInput" accept=".csv" style="display:none"
+           onchange="handleGCStatsFile(this)">
+
+    <div id="gcStatsPreview" style="margin-bottom:12px;"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('gcStatsModal')">Cancel</button>
+      <button class="btn btn-primary" id="gcStatsConfirmBtn"
+              onclick="confirmGCStatsImport()" style="display:none;">
+        ✓ Import &amp; Sync to Cloud
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MANUAL SEASON STATS MODAL -->
+<div class="modal-overlay" id="manualStatsModal">
+  <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-title">✏️ <span id="msPlayerName"></span> — Add / Edit Season Stats</div>
+    <input type="hidden" id="msPlayerIdx">
+
+    <!-- Season selector -->
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+      <div class="form-group" style="margin:0;flex:1;min-width:120px;">
+        <label>Season Year</label>
+        <input type="number" id="ms_year" value="2025" min="2018" max="2030">
+      </div>
+      <div class="form-group" style="margin:0;flex:2;min-width:180px;">
+        <label>Team Name</label>
+        <input type="text" id="ms_team" placeholder="e.g. Leominster Majors">
+      </div>
+      <div class="form-group" style="margin:0;min-width:80px;">
+        <label>Jersey #</label>
+        <input type="text" id="ms_number" placeholder="#">
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="msLoadExisting()"
+        style="align-self:flex-end;font-size:11px;white-space:nowrap;">
+        ↓ Load existing
+      </button>
+    </div>
+
+    <!-- BATTING -->
+    <div style="font-size:11px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:10px;">⚾ Batting</div>
+    <div class="ms-grid">
+      <div class="form-group"><label>GP</label><input type="number" id="ms_b_gp" placeholder="0"></div>
+      <div class="form-group"><label>PA</label><input type="number" id="ms_b_pa" placeholder="0"></div>
+      <div class="form-group"><label>AB</label><input type="number" id="ms_b_ab" placeholder="0"></div>
+      <div class="form-group"><label>AVG</label><input type="text" id="ms_b_avg" placeholder=".000"></div>
+      <div class="form-group"><label>OBP</label><input type="text" id="ms_b_obp" placeholder=".000"></div>
+      <div class="form-group"><label>SLG</label><input type="text" id="ms_b_slg" placeholder=".000"></div>
+      <div class="form-group"><label>OPS</label><input type="text" id="ms_b_ops" placeholder=".000"></div>
+      <div class="form-group"><label>H</label><input type="number" id="ms_b_h" placeholder="0"></div>
+      <div class="form-group"><label>1B</label><input type="number" id="ms_b_1b" placeholder="0"></div>
+      <div class="form-group"><label>2B</label><input type="number" id="ms_b_2b" placeholder="0"></div>
+      <div class="form-group"><label>3B</label><input type="number" id="ms_b_3b" placeholder="0"></div>
+      <div class="form-group"><label>HR</label><input type="number" id="ms_b_hr" placeholder="0"></div>
+      <div class="form-group"><label>RBI</label><input type="number" id="ms_b_rbi" placeholder="0"></div>
+      <div class="form-group"><label>R</label><input type="number" id="ms_b_r" placeholder="0"></div>
+      <div class="form-group"><label>BB</label><input type="number" id="ms_b_bb" placeholder="0"></div>
+      <div class="form-group"><label>SO</label><input type="number" id="ms_b_so" placeholder="0"></div>
+      <div class="form-group"><label>HBP</label><input type="number" id="ms_b_hbp" placeholder="0"></div>
+      <div class="form-group"><label>SB</label><input type="number" id="ms_b_sb" placeholder="0"></div>
+      <div class="form-group"><label>SB%</label><input type="text" id="ms_b_sb_pct" placeholder="0.0"></div>
+      <div class="form-group"><label>CS</label><input type="number" id="ms_b_cs" placeholder="0"></div>
+      <div class="form-group"><label>XBH</label><input type="number" id="ms_b_xbh" placeholder="0"></div>
+      <div class="form-group"><label>TB</label><input type="number" id="ms_b_tb" placeholder="0"></div>
+      <div class="form-group"><label>QAB</label><input type="number" id="ms_b_qab" placeholder="0"></div>
+      <div class="form-group"><label>QAB%</label><input type="text" id="ms_b_qab_pct" placeholder="0.00"></div>
+    </div>
+
+    <!-- PITCHING -->
+    <div style="font-size:11px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;font-weight:700;margin:18px 0 10px;">🎯 Pitching</div>
+    <div class="ms-grid">
+      <div class="form-group"><label>IP</label><input type="text" id="ms_p_ip" placeholder="0.0"></div>
+      <div class="form-group"><label>GP</label><input type="number" id="ms_p_gp" placeholder="0"></div>
+      <div class="form-group"><label>GS</label><input type="number" id="ms_p_gs" placeholder="0"></div>
+      <div class="form-group"><label>W</label><input type="number" id="ms_p_w" placeholder="0"></div>
+      <div class="form-group"><label>L</label><input type="number" id="ms_p_l" placeholder="0"></div>
+      <div class="form-group"><label>SV</label><input type="number" id="ms_p_sv" placeholder="0"></div>
+      <div class="form-group"><label>H allowed</label><input type="number" id="ms_p_h" placeholder="0"></div>
+      <div class="form-group"><label>R allowed</label><input type="number" id="ms_p_r" placeholder="0"></div>
+      <div class="form-group"><label>ER</label><input type="number" id="ms_p_er" placeholder="0"></div>
+      <div class="form-group"><label>BB</label><input type="number" id="ms_p_bb" placeholder="0"></div>
+      <div class="form-group"><label>SO</label><input type="number" id="ms_p_so" placeholder="0"></div>
+      <div class="form-group"><label>ERA</label><input type="text" id="ms_p_era" placeholder="0.000"></div>
+      <div class="form-group"><label>WHIP</label><input type="text" id="ms_p_whip" placeholder="0.000"></div>
+      <div class="form-group"><label>Pitches</label><input type="number" id="ms_p_pitches" placeholder="0"></div>
+      <div class="form-group"><label>BAA</label><input type="text" id="ms_p_baa" placeholder=".000"></div>
+    </div>
+
+    <!-- FIELDING -->
+    <div style="font-size:11px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;font-weight:700;margin:18px 0 10px;">🧤 Fielding</div>
+    <div class="ms-grid">
+      <div class="form-group"><label>TC</label><input type="number" id="ms_f_tc" placeholder="0"></div>
+      <div class="form-group"><label>A (Assists)</label><input type="number" id="ms_f_a" placeholder="0"></div>
+      <div class="form-group"><label>PO (Putouts)</label><input type="number" id="ms_f_po" placeholder="0"></div>
+      <div class="form-group"><label>FPCT</label><input type="text" id="ms_f_fpct" placeholder="1.000"></div>
+      <div class="form-group"><label>E (Errors)</label><input type="number" id="ms_f_e" placeholder="0"></div>
+    </div>
+
+    <div id="msExistingWarning" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;
+      background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);font-size:12px;color:#f87171;">
+    </div>
+
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn btn-ghost" onclick="closeModal('manualStatsModal')">Cancel</button>
+      <button class="btn btn-ghost btn-sm" onclick="msClearForm()" style="color:var(--text2);">Clear</button>
+      <button class="btn btn-primary" onclick="saveManualStats()">💾 Save &amp; Sync to Cloud</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE PLAYERS MODAL -->
+
+
+<!-- PHOTO CROP MODAL -->
+<div class="modal-overlay" id="photoCropModal" style="z-index:1700;">
+  <div class="modal" style="max-width:520px;width:calc(100vw - 24px);padding:0;overflow:hidden;">
+    <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:1px;">📸 Player Photo</div>
+      <button onclick="closeModal('photoCropModal')" style="margin-left:auto;background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <div style="padding:20px;">
+      <!-- Upload button (shown before photo selected) -->
+      <div id="photoCropUploadArea" style="border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;" onclick="document.getElementById('photoCropFileInput').click()">
+        <div style="font-size:36px;margin-bottom:8px;">📷</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Upload a photo</div>
+        <div style="font-size:12px;color:var(--text2);">JPG, PNG, HEIC — tap to choose</div>
+      </div>
+      <input type="file" id="photoCropFileInput" accept="image/*" style="display:none;" onchange="photoCropLoadFile(this)">
+
+      <!-- Crop interface (shown after photo selected) -->
+      <div id="photoCropEditor" style="display:none;">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">
+          Drag to reposition · Pinch or scroll to zoom the circle crop
+        </div>
+        <div style="position:relative;width:100%;aspect-ratio:1;max-height:340px;border-radius:10px;overflow:hidden;background:#000;cursor:grab;touch-action:none;" id="photoCropStage">
+          <img id="photoCropImg" style="position:absolute;transform-origin:0 0;" draggable="false" loading="lazy">
+          <!-- Circle overlay -->
+          <div id="photoCropOverlay" style="position:absolute;inset:0;pointer-events:none;">
+            <canvas id="photoCropMask" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+          <span style="font-size:11px;color:var(--text2);white-space:nowrap;">Circle size</span>
+          <input type="range" id="photoCropRadius" min="20" max="50" value="40" style="flex:1;accent-color:var(--gold);" oninput="photoCropDraw()">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button onclick="document.getElementById('photoCropFileInput').click()" style="flex:1;padding:10px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text2);font-family:'DM Sans';font-size:13px;cursor:pointer;">Change Photo</button>
+          <button onclick="photoCropSave()" style="flex:2;padding:10px;border-radius:8px;background:var(--gold);border:none;color:#000;font-family:'Bebas Neue';font-size:16px;letter-spacing:1px;cursor:pointer;">✓ SAVE PHOTO</button>
+        </div>
+      </div>
+
+      <!-- Preview (shown after save) -->
+      <div id="photoCropPreview" style="display:none;text-align:center;padding:12px 0;">
+        <div style="font-size:12px;color:#10b981;font-weight:600;margin-bottom:12px;">✓ Photo saved!</div>
+        <div style="display:flex;justify-content:center;gap:24px;align-items:flex-start;">
+          <div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Draft Card</div>
+            <img id="photoCropThumb" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" loading="lazy">
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Banner Photo</div>
+            <img id="photoCropFull" style="width:80px;height:100px;border-radius:8px;object-fit:cover;object-position:top;border:2px solid var(--gold);" loading="lazy">
+          </div>
+        </div>
+        <button onclick="photoCropEditAgain()" style="margin-top:14px;padding:8px 20px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text2);font-family:'DM Sans';font-size:12px;cursor:pointer;">Adjust crop</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="audio_assets.js"></script>
+<script src="coaching_tools.js"></script>
+</body>
+</html>

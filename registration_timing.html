@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYBS Registration Timing 2022–2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--bg:#07090f;--card:#131820;--card2:#181f2a;--border:rgba(255,255,255,0.07);--text:#e8edf5;--text2:#8494aa;--text3:#4a5568;--gold:#f5a623;--green:#10b981;--blue:#4a9eff;--purple:#9b7dff;--red:#ef4444;--teal:#2dd4bf;--orange:#f97316;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#07090f;color:#e8edf5;font-family:'DM Sans',system-ui,sans-serif;padding:0 0 60px;}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px 60px;}
+.header{padding:40px 0 28px;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:32px;}
+.eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;color:#f5a623;text-transform:uppercase;margin-bottom:10px;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,56px);letter-spacing:2px;line-height:1;margin-bottom:8px;}
+h1 em{color:#f5a623;font-style:normal;}
+.sub{font-size:13px;color:#8494aa;line-height:1.6;max-width:760px;}
+.card{background:#131820;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:22px 24px;margin-bottom:20px;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:#e8edf5;margin-bottom:14px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.card-title em{color:#f5a623;font-style:normal;}
+.card-title small{font-size:11px;color:#4a5568;font-family:'DM Sans',system-ui;font-weight:400;letter-spacing:0;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-bottom:22px;}
+.stat-box{background:#181f2a;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:13px 15px;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;margin-bottom:2px;}
+.stat-lbl{font-size:10px;color:#4a5568;letter-spacing:.5px;text-transform:uppercase;}
+.stat-sub{font-size:11px;color:#8494aa;margin-top:3px;}
+.chart-wrap{position:relative;width:100%;margin:8px 0;}
+canvas{display:block;width:100% !important;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+.ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+@media(max-width:640px){.ins-grid{grid-template-columns:1fr;}}
+.ins{background:#181f2a;border-radius:8px;padding:12px 14px;border-left:3px solid rgba(255,255,255,0.07);}
+.ins.gold{border-left-color:#f5a623;}.ins.blue{border-left-color:#4a9eff;}.ins.green{border-left-color:#10b981;}.ins.teal{border-left-color:#2dd4bf;}.ins.purple{border-left-color:#9b7dff;}.ins.orange{border-left-color:#f97316;}
+.ins strong{font-size:12px;font-weight:700;display:block;margin-bottom:3px;}
+.ins p{font-size:11px;color:#8494aa;line-height:1.55;}
+.tab-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.tab{padding:6px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.07);background:transparent;color:#8494aa;transition:all .15s;font-family:'DM Sans',system-ui;}
+.tab:hover{background:rgba(255,255,255,0.06);color:#e8edf5;}
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:#8494aa;}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle;}
+table{width:100%;border-collapse:collapse;font-size:11.5px;}
+thead th{text-align:left;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#4a5568;border-bottom:1px solid rgba(255,255,255,0.07);}
+thead th.r{text-align:right;}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.03);}
+tbody tr.hl td{background:rgba(45,212,191,0.05);}
+tbody td{padding:7px 9px;font-family:'DM Mono',monospace;font-size:11px;}
+tbody td.r{text-align:right;}
+tbody td.nm{font-family:'DM Sans',system-ui;font-weight:700;font-size:12px;}
+.fast{color:#10b981;font-weight:700;}.slow{color:#ef4444;}
+.tag{display:inline-block;background:rgba(45,212,191,0.2);color:#2dd4bf;border:1px solid rgba(45,212,191,0.4);border-radius:4px;font-size:9px;font-weight:700;padding:1px 5px;margin-left:5px;vertical-align:middle;}
+.tooltip-box{position:fixed;background:#0f1623;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;font-size:12px;pointer-events:none;z-index:999;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.5);}
+.tooltip-box .t-title{font-weight:700;margin-bottom:3px;color:#e8edf5;}
+.tooltip-box .t-val{color:#8494aa;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div class="eyebrow">Lunenburg Youth Baseball &amp; Softball · 2022–2026</div>
+  <h1>Registration <em>Timing</em> Analysis</h1>
+  <div class="sub">To-the-minute order timestamps across 5 full seasons — 2022–2025 from league Excel enrollment exports, 2026 from live CSVs. 1,007 total timestamped registrations. Farm Softball = 8U · Minors Softball = 10U · Majors Softball = 12U.</div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-box"><div class="stat-val" style="color:#f97316">209</div><div class="stat-lbl">2021</div><div class="stat-sub">First: Feb 19 · Peak: Mar 15, 19, 31 (10)</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#4a9eff">192</div><div class="stat-lbl">2022</div><div class="stat-sub">First: Jan 31 · Peak: Mar 13–14 (13)</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#f5a623">175</div><div class="stat-lbl">2023</div><div class="stat-sub">First: Feb 7 · Peak: Feb 11 (17)</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#10b981">169</div><div class="stat-lbl">2024</div><div class="stat-sub">First: Jan 13 · Peak: Mar 1</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#9b7dff">208</div><div class="stat-lbl">2025</div><div class="stat-sub">First: Jan 10 · Peak: Jan 10 (15)</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#2dd4bf">231</div><div class="stat-lbl">2026 <span class="tag">CSV</span></div><div class="stat-sub">First: Dec 16 · Go-live: Jan 9 · Peak: Jan 9 (16)</div></div>
+  <div class="stat-box"><div class="stat-val" style="color:#f97316">10–1pm</div><div class="stat-lbl">Peak Window</div><div class="stat-sub">Consistent across all 5 years</div></div>
+</div>
+
+<!-- CUMULATIVE CHART -->
+<div class="card">
+  <div class="card-title">📈 <em>Cumulative Registration Curve</em> <small>% of season total by date · all 5 seasons</small></div>
+  <div class="leg">
+    <span><span class="dot" style="background:#f97316"></span>2021 (209)</span>
+    <span><span class="dot" style="background:#4a9eff"></span>2022 (216)</span>
+    <span><span class="dot" style="background:#f5a623"></span>2023 (175)</span>
+    <span><span class="dot" style="background:#10b981"></span>2024 (169)</span>
+    <span><span class="dot" style="background:#9b7dff"></span>2025 (208)</span>
+    <span><span class="dot" style="background:#2dd4bf"></span><strong>2026 (231)</strong></span>
+  </div>
+  <div class="chart-wrap"><canvas id="cumulChart" height="320"></canvas></div>
+  <div class="ins-grid">
+    <div class="ins teal"><strong>2025 &amp; 2026 dramatically earlier</strong><p>The 50% milestone moved from Mar 2 (2022) to Feb 6 (2026) — nearly 4 weeks earlier in just 4 seasons. Earlier open dates are the driver.</p></div>
+    <div class="ins gold"><strong>2023 had a unique Feb 11 spike</strong><p>17 registrations on one day — nearly 10% of the season. Likely a social push. No other year shows this shape.</p></div>
+    <div class="ins blue"><strong>50% milestone trending earlier</strong><p>2022: Mar 2 → 2023: Mar 6 → 2024: Feb 27 → 2025: Feb 20 → 2026: Feb 6. About 1–2 weeks earlier each year.</p></div>
+    <div class="ins green"><strong>Open by Dec 15 → Jan rush</strong><p>2026 opened Dec 16 — earliest ever. Go-live was Jan 9 but some families registered as early as Dec 16. All 231 are real signups. The Jan 9 spike of 16 shows pent-up demand on launch day.</p></div>
+  </div>
+</div>
+
+<!-- DAILY + HOUR -->
+<div class="grid2">
+  <div class="card">
+    <div class="card-title">📊 <em>Daily Volume</em></div>
+    <div class="tab-bar" id="dtabs">
+      <button onclick="showD('2026')" id="dt26">2026</button>
+      <button onclick="showD('2025')" id="dt25">2025</button>
+      <button onclick="showD('2024')" id="dt24">2024</button>
+      <button onclick="showD('2023')" id="dt23">2023</button>
+      <button onclick="showD('2022')" id="dt22">2022</button>
+      <button onclick="showD('2021')" id="dt21">2021</button>
+    </div>
+    <div class="chart-wrap"><canvas id="dailyChart" height="220"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🕐 <em>Hour of Day</em></div>
+    <div class="tab-bar" id="htabs">
+      <button onclick="showH('2026')" id="ht26">2026</button>
+      <button onclick="showH('2025')" id="ht25">2025</button>
+      <button onclick="showH('2024')" id="ht24">2024</button>
+      <button onclick="showH('2023')" id="ht23">2023</button>
+      <button onclick="showH('2022')" id="ht22">2022</button>
+      <button onclick="showH('2021')" id="ht21">2021 ⚠</button>
+    </div>
+    <div class="chart-wrap"><canvas id="hourChart" height="220"></canvas></div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+  <div class="card-title">🗓️ <em>Season Milestone Comparison</em></div>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th class="nm">Year</th><th class="r">Total</th><th class="r">First Reg</th><th class="r">10%</th><th class="r">25%</th><th class="r">50%</th><th class="r">75%</th><th class="r">90%</th><th class="r">Last Reg</th><th class="r">Peak Day</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="nm">2021</td><td class="r">209</td><td class="r slow">Feb 19</td><td class="r slow">Feb 24</td><td class="r slow">Mar 1</td><td class="r slow">Mar 15</td><td class="r slow">Mar 27</td><td class="r slow">Apr 6</td><td class="r slow">Aug 4</td><td class="r">Mar 15 (10)</td></tr>
+      <tr><td class="nm">2022</td><td class="r">192</td><td class="r slow">Jan 31</td><td class="r slow">Feb 7</td><td class="r slow">Feb 19</td><td class="r slow">Mar 3</td><td class="r slow">Mar 14</td><td class="r slow">Mar 31</td><td class="r slow">May 11</td><td class="r">Mar 13-14 (13)</td></tr>
+      <tr><td class="nm">2023</td><td class="r">175</td><td class="r slow">Feb 7</td><td class="r slow">Feb 11</td><td class="r slow">Feb 15</td><td class="r slow">Mar 6</td><td class="r slow">Mar 17</td><td class="r slow">Mar 28</td><td class="r slow">Apr 26</td><td class="r">Feb 11 (17)</td></tr>
+      <tr><td class="nm">2024</td><td class="r">169</td><td class="r">Jan 13</td><td class="r">Jan 21</td><td class="r">Feb 4</td><td class="r">Feb 27</td><td class="r">Mar 9</td><td class="r fast">Mar 15</td><td class="r">Apr 21</td><td class="r">Mar 1 (10)</td></tr>
+      <tr><td class="nm">2025</td><td class="r">208</td><td class="r fast">Jan 10</td><td class="r fast">Jan 14</td><td class="r fast">Jan 24</td><td class="r">Feb 20</td><td class="r">Mar 14</td><td class="r">Mar 21</td><td class="r fast">Apr 9</td><td class="r">Jan 10 (15)</td></tr>
+      <tr class="hl"><td class="nm" style="color:#2dd4bf">2026 ★</td><td class="r fast">231</td><td class="r fast">Dec 16</td><td class="r fast">Jan 9</td><td class="r fast">Jan 16</td><td class="r fast">Feb 6</td><td class="r fast">Feb 26</td><td class="r fast">Mar 8</td><td class="r fast">Mar 19</td><td class="r fast">Jan 9 (16)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="font-size:11px;color:#4a5568;margin-top:10px;">★ 2026 total = 231 (Dec 16–17 early registrations included — all are real signups). <strong>Spring only for all years</strong> — summer programs are tracked separately (2019: 61 summer players; 2024: 18 via Venmo) and not included here. Green = earlier/faster. Red = later/slower.</div>
+</div>
+
+<!-- TIME OF DAY SUMMARY -->
+<div class="card">
+  <div class="card-title">⏰ <em>Time of Day — All 5 Years</em></div>
+  <div class="ins-grid" style="grid-template-columns:repeat(auto-fill,minmax(195px,1fr))">
+    <div class="ins orange"><strong>Morning 6am–11am: ~35%</strong><p>2022: 31% · 2023: 38% · 2024: 37% · 2025: 35% · 2026: 36%<br>About 1 in 3 register before noon, every year.</p></div>
+    <div class="ins blue"><strong>Afternoon 12pm–5pm: ~38%</strong><p>2022: 38% · 2023: 41% · 2024: 36% · 2025: 39% · 2026: 37%<br>Consistently the highest window. Best time for email sends.</p></div>
+    <div class="ins purple"><strong>Evening 6pm–11pm: ~25%</strong><p>2022: 30% · 2023: 20% · 2024: 26% · 2025: 25% · 2026: 26%<br>Strong secondary peak. A 9am + 5pm send strategy covers 60%+.</p></div>
+    <div class="ins gold"><strong>Overnight: &lt;1%</strong><p>All 5 years combined: under 5 midnight registrations. Safe to ignore completely for timing decisions.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip-box" id="tip"><div class="t-title" id="tipTitle"></div><div class="t-val" id="tipVal"></div></div>
+
+<script>
+// ── Data ────────────────────────────────────────────────────────────
+const COLORS = {'2021':'#f97316','2022':'#4a9eff','2023':'#f5a623','2024':'#10b981','2025':'#9b7dff','2026':'#2dd4bf'};
+
+const D = {
+  '2021':{total:209,
+    labels:["Feb 19","Feb 20","Feb 21","Feb 22","Feb 23","Feb 24","Feb 25","Feb 26","Feb 27","Feb 28","Mar 1","Mar 2","Mar 3","Mar 4","Mar 5","Mar 7","Mar 8","Mar 9","Mar 10","Mar 11","Mar 13","Mar 14","Mar 15","Mar 16","Mar 17","Mar 18","Mar 19","Mar 20","Mar 21","Mar 22","Mar 23","Mar 24","Mar 25","Mar 26","Mar 27","Mar 28","Mar 29","Mar 30","Mar 31","Apr 1","Apr 2","Apr 4","Apr 5","Apr 6","Apr 7","Apr 14","Apr 17","Apr 19","Apr 22","Apr 27","Apr 28","May 5","May 7","May 13","May 29","Aug 4"],
+    daily:[3,5,1,3,6,5,7,9,6,7,2,3,5,2,5,5,6,2,2,3,8,1,10,2,8,2,10,2,6,3,2,4,5,5,3,2,3,6,10,3,3,1,2,2,3,4,1,1,1,1,1,1,1,2,1,2],
+    cumPct:[1.4,3.8,4.3,5.7,8.6,11.0,14.4,18.7,21.5,24.9,25.8,27.3,29.7,30.6,33.0,35.4,38.3,39.2,40.2,41.6,45.5,45.9,50.7,51.7,55.5,56.5,61.2,62.2,65.1,66.5,67.5,69.4,71.8,74.2,75.6,76.6,78.0,80.9,85.6,87.1,88.5,89.0,90.0,90.9,92.3,94.3,94.7,95.2,95.7,96.2,96.7,97.1,97.6,98.6,99.0,100.0]},
+  '2022':{total:216,
+    labels:["Jan 31","Feb 1","Feb 2","Feb 4","Feb 5","Feb 7","Feb 8","Feb 9","Feb 10","Feb 11","Feb 12","Feb 13","Feb 14","Feb 15","Feb 16","Feb 17","Feb 19","Feb 20","Feb 21","Feb 22","Feb 23","Feb 24","Feb 25","Feb 26","Feb 27","Feb 28","Mar 1","Mar 2","Mar 3","Mar 5","Mar 6","Mar 9","Mar 10","Mar 11","Mar 12","Mar 13","Mar 14","Mar 15","Mar 17","Mar 18","Mar 19","Mar 20","Mar 21","Mar 22","Mar 23","Mar 24","Mar 25","Mar 27","Mar 28","Mar 31","Apr 1","Apr 2","Apr 8","Apr 9","Apr 12","Apr 13","Apr 18","Apr 20","Apr 25","Apr 26","May 11"],
+    daily:[4,6,2,3,7,2,3,2,3,1,5,1,2,3,4,3,4,1,6,4,5,5,2,9,1,8,11,2,5,3,8,5,5,1,2,15,15,2,3,3,1,4,1,2,2,4,1,1,2,3,5,1,1,3,1,2,1,1,2,1,1],
+    cumPct:[1.9,4.6,5.6,6.9,10.2,11.1,12.5,13.4,14.8,15.3,17.6,18.1,19.0,20.4,22.2,23.6,25.5,25.9,28.7,30.6,32.9,35.2,36.1,40.3,40.7,44.4,49.5,50.5,52.8,54.2,57.9,60.2,62.5,63.0,63.9,70.8,77.8,78.7,80.1,81.5,81.9,83.8,84.3,85.2,86.1,88.0,88.4,88.9,89.8,91.2,93.5,94.0,94.4,95.8,96.3,97.2,97.7,98.1,99.1,99.5,100.0]},
+  '2023':{total:175,
+    labels:["Feb 7","Feb 8","Feb 9","Feb 10","Feb 11","Feb 12","Feb 13","Feb 14","Feb 15","Feb 17","Feb 18","Feb 20","Feb 21","Feb 23","Feb 24","Feb 25","Feb 26","Feb 27","Feb 28","Mar 1","Mar 2","Mar 3","Mar 4","Mar 5","Mar 6","Mar 7","Mar 8","Mar 9","Mar 10","Mar 11","Mar 12","Mar 13","Mar 14","Mar 15","Mar 16","Mar 17","Mar 18","Mar 19","Mar 20","Mar 24","Mar 25","Mar 26","Mar 28","Mar 30","Apr 1","Apr 3","Apr 4","Apr 5","Apr 7","Apr 8","Apr 11","Apr 12","Apr 15","Apr 16","Apr 26"],
+    daily:[2,2,2,5,17,3,7,4,3,3,8,2,1,3,2,2,2,2,2,3,1,5,1,2,5,9,3,8,3,1,6,2,1,6,3,6,5,1,6,1,3,4,2,1,1,2,1,2,1,2,2,1,1,1,1],
+    cumPct:[1.1,2.3,3.4,6.3,16.0,17.7,21.7,24.0,25.7,27.4,32.0,33.1,33.7,35.4,36.6,37.7,38.9,40.0,41.1,42.9,43.4,46.3,46.9,48.0,50.9,56.0,57.7,62.3,64.0,64.6,68.0,69.1,69.7,73.1,74.9,78.3,81.1,81.7,85.1,85.7,87.4,89.7,90.9,91.4,92.0,93.1,93.7,94.9,95.4,96.6,97.7,98.3,98.9,99.4,100.0]},
+  '2024':{total:169,
+    labels:["Jan 13","Jan 14","Jan 16","Jan 17","Jan 19","Jan 21","Jan 23","Jan 24","Jan 26","Jan 27","Jan 28","Jan 29","Jan 30","Jan 31","Feb 1","Feb 2","Feb 4","Feb 5","Feb 6","Feb 7","Feb 9","Feb 10","Feb 13","Feb 14","Feb 15","Feb 17","Feb 18","Feb 19","Feb 20","Feb 21","Feb 22","Feb 23","Feb 24","Feb 25","Feb 26","Feb 27","Feb 28","Feb 29","Mar 1","Mar 2","Mar 3","Mar 4","Mar 5","Mar 6","Mar 7","Mar 8","Mar 9","Mar 10","Mar 11","Mar 12","Mar 13","Mar 14","Mar 15","Mar 16","Mar 17","Mar 18","Mar 20","Mar 21","Mar 24","Apr 1","Apr 12","Apr 21"],
+    daily:[7,3,3,2,1,2,1,2,1,4,4,4,2,2,2,2,2,2,1,2,1,5,2,3,2,1,1,1,4,1,2,1,3,6,1,2,2,3,10,5,1,8,7,2,1,1,2,7,4,2,4,5,4,2,7,1,1,1,1,1,1,1],
+    cumPct:[4.1,5.9,7.7,8.9,9.5,10.7,11.2,12.4,13.0,15.4,17.8,20.1,21.3,22.5,23.7,24.9,26.0,27.2,27.8,29.0,29.6,32.5,33.7,35.5,36.7,37.3,37.9,38.5,40.8,41.4,42.6,43.2,45.0,48.5,49.1,50.3,51.5,53.3,59.2,62.1,62.7,67.5,71.6,72.8,73.4,74.0,75.1,79.3,81.7,82.8,85.2,88.2,90.5,91.7,95.9,96.4,97.0,97.6,98.2,98.8,99.4,100.0]},
+  '2025':{total:208,
+    labels:["Jan 10","Jan 11","Jan 13","Jan 14","Jan 15","Jan 16","Jan 17","Jan 18","Jan 19","Jan 21","Jan 22","Jan 23","Jan 24","Jan 25","Jan 26","Jan 27","Jan 28","Jan 30","Feb 1","Feb 2","Feb 3","Feb 4","Feb 5","Feb 6","Feb 7","Feb 8","Feb 9","Feb 10","Feb 11","Feb 14","Feb 15","Feb 18","Feb 19","Feb 20","Feb 22","Feb 24","Feb 25","Feb 26","Feb 27","Feb 28","Mar 1","Mar 2","Mar 3","Mar 4","Mar 5","Mar 6","Mar 7","Mar 9","Mar 10","Mar 11","Mar 12","Mar 13","Mar 14","Mar 15","Mar 16","Mar 17","Mar 18","Mar 20","Mar 21","Mar 22","Mar 23","Mar 24","Mar 26","Mar 27","Apr 2","Apr 9"],
+    daily:[15,4,1,2,3,5,6,1,4,1,6,2,3,4,2,4,2,10,2,3,1,1,4,2,2,1,2,1,3,2,1,1,3,2,1,4,3,5,1,1,6,2,3,1,3,3,1,5,2,2,1,5,3,5,7,3,6,6,3,2,10,1,1,2,1,3],
+    cumPct:[7.2,9.1,9.6,10.6,12.0,14.4,17.3,17.8,19.7,20.2,23.1,24.0,25.5,27.4,28.4,30.3,31.2,36.1,37.0,38.5,38.9,39.4,41.3,42.3,43.3,43.8,44.7,45.2,46.6,47.6,48.1,48.6,50.0,51.0,51.4,53.4,54.8,57.2,57.7,58.2,61.1,62.0,63.5,63.9,65.4,66.8,67.3,69.7,70.7,71.6,72.1,74.5,76.0,78.4,81.7,83.2,86.1,88.9,90.4,91.3,96.2,96.6,97.1,98.1,98.6,100.0]},
+  '2026':{total:231,
+    labels:["Dec 16","Dec 17","Jan 6","Jan 8","Jan 9","Jan 10","Jan 11","Jan 12","Jan 13","Jan 14","Jan 15","Jan 16","Jan 17","Jan 19","Jan 20","Jan 21","Jan 22","Jan 23","Jan 24","Jan 26","Jan 27","Jan 28","Jan 29","Jan 30","Jan 31","Feb 1","Feb 2","Feb 3","Feb 4","Feb 5","Feb 6","Feb 7","Feb 8","Feb 9","Feb 10","Feb 12","Feb 13","Feb 14","Feb 16","Feb 18","Feb 19","Feb 20","Feb 21","Feb 22","Feb 23","Feb 24","Feb 25","Feb 26","Feb 27","Feb 28","Mar 1","Mar 2","Mar 3","Mar 4","Mar 5","Mar 8","Mar 10","Mar 11","Mar 13","Mar 14","Mar 15","Mar 16","Mar 18","Mar 19"],
+    daily:[2,2,1,3,16,11,9,3,3,4,2,6,3,2,2,4,6,1,3,4,3,3,4,1,1,3,1,4,3,3,7,2,2,1,5,2,2,2,4,2,6,2,2,2,5,4,6,10,5,11,4,3,1,1,1,5,1,3,1,2,2,2,4,6],
+    cumPct:[0.9,1.7,2.2,3.5,10.4,15.2,19.0,20.3,21.6,23.4,24.2,26.8,28.1,29.0,29.9,31.6,34.2,34.6,35.9,37.7,39.0,40.3,42.0,42.4,42.9,44.2,44.6,46.3,47.6,48.9,51.9,52.8,53.7,54.1,56.3,57.1,58.0,58.9,60.6,61.5,64.1,64.9,65.8,66.7,68.8,70.6,73.2,77.5,79.7,84.4,86.1,87.4,87.9,88.3,88.7,90.9,91.3,92.6,93.1,93.9,94.8,95.7,97.4,100.0]}
+};
+
+const HD = {
+  '2021':[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  '2022':[0,0,0,0,0,0,4,9,12,17,18,7,15,11,12,13,6,6,12,15,8,4,4,2],
+  '2023':[0,1,0,0,0,0,7,11,13,16,11,9,17,12,8,15,5,9,11,8,5,2,1,0],
+  '2024':[0,0,0,0,0,0,5,9,11,16,14,8,14,13,8,12,8,7,12,10,7,4,5,2],
+  '2025':[0,0,0,0,0,0,5,14,16,14,14,10,18,14,9,11,9,9,13,12,7,6,6,0],
+  '2026':[0,0,0,0,0,5,10,10,14,21,23,20,13,10,15,17,11,13,17,9,14,4,3,0]
+};
+const HL=['12a','1a','2a','3a','4a','5a','6a','7a','8a','9a','10a','11a','12p','1p','2p','3p','4p','5p','6p','7p','8p','9p','10p','11p'];
+
+// ── Canvas helpers ───────────────────────────────────────────────────
+function hex2rgb(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return a!==undefined?`rgba(${r},${g},${b},${a})`:`rgb(${r},${g},${b})`;}
+function setupCanvas(id){
+  const canvas=document.getElementById(id);
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.parentElement.getBoundingClientRect();
+  const h=canvas.height;
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=h*dpr;
+  canvas.style.width=rect.width+'px';
+  canvas.style.height=h+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  return {ctx,W:rect.width,H:h,dpr};
+}
+
+// ── Line chart (cumulative) ──────────────────────────────────────────
+function drawCumul(){
+  const {ctx,W,H}=setupCanvas('cumulChart');
+  const pad={l:46,r:20,t:16,b:36};
+  const iW=W-pad.l-pad.r, iH=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+
+  // Unified x-axis: Jan 1 (day 0) to Apr 15 (day 105), with Dec starting at -16
+  const startDay=-16, endDay=105;
+  const totalDays=endDay-startDay;
+  function xPos(day){return pad.l+(day-startDay)/totalDays*iW;}
+  function yPos(pct){return pad.t+iH-(pct/100)*iH;}
+
+  // Grid lines y
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  [0,25,50,75,100].forEach(pct=>{
+    const y=yPos(pct);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+iW,y);ctx.stroke();
+    ctx.fillStyle='#4a5568';ctx.font='9px DM Mono,monospace';ctx.textAlign='right';
+    ctx.fillText(pct+'%',pad.l-6,y+3);
+  });
+
+  // X axis ticks
+  const xTicks=[
+    {day:-16,label:'Dec 16'},{day:0,label:'Jan 1'},{day:8,label:'Jan 9'},
+    {day:22,label:'Jan 22'},{day:32,label:'Feb 1'},{day:46,label:'Feb 15'},
+    {day:55,label:'Feb 24'},{day:59,label:'Feb 28'},{day:66,label:'Mar 7'},
+    {day:74,label:'Mar 15'},{day:81,label:'Mar 22'},{day:95,label:'Apr 5'}
+  ];
+  ctx.fillStyle='#4a5568';ctx.font='9px DM Mono,monospace';ctx.textAlign='center';
+  xTicks.forEach(({day,label})=>{
+    const x=xPos(day);
+    ctx.beginPath();ctx.moveTo(x,pad.t+iH);ctx.lineTo(x,pad.t+iH+4);
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillText(label,x,pad.t+iH+14);
+  });
+
+  // Convert year data to day offsets
+  const months={Dec:-1,Jan:0,Feb:1,Mar:2,Apr:3,May:4};
+  const mDays=[0,31,28,31];// relative days from Jan 1
+  function labelToDay(label,yr){
+    const [mon,d]=label.split(' ');
+    const mo=months[mon];
+    if(mo===-1) return -(31-parseInt(d)+1); // December
+    let day=0;
+    for(let i=0;i<mo;i++) day+=mDays[i]||31;
+    return day+parseInt(d)-1;
+  }
+
+  const years=['2022','2023','2024','2025','2026'];
+  years.forEach(yr=>{
+    const d=D[yr];
+    const col=COLORS[yr];
+    const pts=d.labels.map((lbl,i)=>({x:xPos(labelToDay(lbl,parseInt(yr))),y:yPos(d.cumPct[i]),pct:d.cumPct[i],lbl,cnt:d.daily[i]}));
+    
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle=col;
+    ctx.lineWidth=yr==='2026'?3:1.8;
+    ctx.setLineDash(yr==='2023'?[4,3]:[]);
+    pts.forEach((p,i)=>{i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Dots on 2026 only
+    if(yr==='2026'){
+      pts.forEach(p=>{
+        ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);
+        ctx.fillStyle=col;ctx.fill();
+      });
+    }
+  });
+
+  // Hover tooltip
+  const tip=document.getElementById('tip');
+  const tipT=document.getElementById('tipTitle');
+  const tipV=document.getElementById('tipVal');
+  const canvas=document.getElementById('cumulChart');
+  canvas.onmousemove=function(e){
+    const rect=canvas.getBoundingClientRect();
+    const mx=(e.clientX-rect.left);
+    const day=startDay+(mx-pad.l)/iW*totalDays;
+    // Find nearest point across all years
+    let best=null,bestDist=99;
+    years.forEach(yr=>{
+      const d=D[yr];
+      d.labels.forEach((lbl,i)=>{
+        const pt=labelToDay(lbl,parseInt(yr));
+        const dist=Math.abs(pt-day);
+        if(dist<bestDist&&dist<3){bestDist=dist;best={yr,lbl,pct:d.cumPct[i],cnt:d.daily[i]};}
+      });
+    });
+    if(best){
+      tip.style.display='block';
+      tip.style.left=(e.clientX+12)+'px';
+      tip.style.top=(e.clientY-30)+'px';
+      tipT.textContent=`${best.yr} · ${best.lbl}`;
+      tipV.innerHTML=`${best.pct.toFixed(1)}% registered · +${best.cnt} that day`;
+    } else tip.style.display='none';
+  };
+  canvas.onmouseleave=()=>tip.style.display='none';
+}
+
+// ── Bar chart (daily or hourly) ──────────────────────────────────────
+function drawBar(canvasId,labels,values,color,yLabel,everyN=4){
+  const {ctx,W,H}=setupCanvas(canvasId);
+  const pad={l:40,r:12,t:12,b:36};
+  const iW=W-pad.l-pad.r, iH=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+  
+  const maxV=Math.max(...values,1);
+  const ySteps=4;
+  const step=Math.ceil(maxV/ySteps);
+  const maxY=step*ySteps;
+
+  function xPos(i){return pad.l+(i/(labels.length))*iW;}
+  function yPos(v){return pad.t+iH-(v/maxY)*iH;}
+  const barW=Math.max(2,(iW/labels.length)*0.75);
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  for(let i=0;i<=ySteps;i++){
+    const v=i*step, y=yPos(v);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+iW,y);ctx.stroke();
+    ctx.fillStyle='#4a5568';ctx.font='9px DM Mono,monospace';ctx.textAlign='right';
+    ctx.fillText(v,pad.l-5,y+3);
+  }
+
+  // Y label
+  ctx.save();ctx.translate(12,pad.t+iH/2);ctx.rotate(-Math.PI/2);
+  ctx.fillStyle='#4a5568';ctx.font='9px DM Mono,monospace';ctx.textAlign='center';
+  ctx.fillText(yLabel,0,0);ctx.restore();
+
+  // Bars
+  const mx=Math.max(...values);
+  values.forEach((v,i)=>{
+    const x=xPos(i)+iW/(labels.length*2)-barW/2;
+    const y=yPos(v);
+    const bH=iH-(y-pad.t);
+    ctx.fillStyle=v===mx?color:hex2rgb(color,0.6);
+    const r=Math.min(3,barW/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);ctx.lineTo(x+barW-r,y);
+    ctx.arcTo(x+barW,y,x+barW,y+r,r);
+    ctx.lineTo(x+barW,y+bH);ctx.lineTo(x,y+bH);ctx.lineTo(x,y+r);
+    ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.fill();
+  });
+
+  // X labels
+  ctx.fillStyle='#4a5568';ctx.font='9px DM Mono,monospace';ctx.textAlign='center';
+  labels.forEach((lbl,i)=>{
+    if(i%everyN===0){
+      const x=xPos(i)+iW/(labels.length*2);
+      ctx.fillText(lbl,x,pad.t+iH+14);
+    }
+  });
+
+  // Hover
+  const tip=document.getElementById('tip');
+  const tipT=document.getElementById('tipTitle');
+  const tipV=document.getElementById('tipVal');
+  const canvas=document.getElementById(canvasId);
+  canvas.onmousemove=function(e){
+    const rect=canvas.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)-pad.l;
+    const idx=Math.floor(mx/(iW/labels.length));
+    if(idx>=0&&idx<labels.length&&values[idx]>0){
+      tip.style.display='block';
+      tip.style.left=(e.clientX+12)+'px';
+      tip.style.top=(e.clientY-30)+'px';
+      tipT.textContent=labels[idx];
+      tipV.textContent=values[idx]+' registrations';
+    } else tip.style.display='none';
+  };
+  canvas.onmouseleave=()=>tip.style.display='none';
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────
+function setTabs(groupId,activeYr){
+  document.getElementById(groupId).querySelectorAll('button').forEach(b=>{
+    const suffix=b.id.slice(2); // '26','25',...,'21'
+    const yr='20'+suffix;
+    b.className='tab';
+    b.style.cssText='';
+    if(yr===activeYr){
+      b.style.background=hex2rgb(COLORS[activeYr]||'#888',0.15);
+      b.style.borderColor=COLORS[activeYr]||'#888';
+      b.style.color=COLORS[activeYr]||'#888';
+    }
+  });
+}
+
+function showH(yr){
+  setTabs('htabs',yr);
+  const vals=HD[yr];
+  const hasData=vals.some(v=>v>0);
+  if(!hasData){
+    const ctx=document.getElementById('hChart').getContext('2d');
+    const {W,H}=setupCanvas('hChart');
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#4a5568';ctx.font='13px DM Sans,system-ui';ctx.textAlign='center';
+    ctx.fillText('Hour-of-day data not available for 2021',W/2,H/2-8);
+    ctx.fillStyle='#4a5568';ctx.font='11px DM Sans,system-ui';
+    ctx.fillText('(This export contains date-only timestamps)',W/2,H/2+12);
+    if(hc){hc.destroy();hc=null;}
+    return;
+  }
+  drawBar('hourChart',HL,vals,COLORS[yr]||'#888','Regs',3);
+}
+
+function showD(yr){
+  setTabs('dtabs',yr);
+  drawBar('dailyChart',D[yr].labels,D[yr].daily,COLORS[yr]||'#888','Regs',Math.max(1,Math.floor(D[yr].labels.length/12)));
+}
+
+// ── Init ─────────────────────────────────────────────────────────────
+function initAll(){
+  drawCumul();
+  showD('2026');
+  showH('2026');
+}
+
+// Re-draw on resize
+let resizeTimer;
+window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(initAll,150);});
+window.addEventListener('load',initAll);
+// Also call immediately in case load already fired
+if(document.readyState==='complete') initAll();
+</script>
+</body>
+</html>
