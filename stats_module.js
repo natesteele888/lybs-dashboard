@@ -12,9 +12,9 @@
 // ── Player alias map ─────────────────────────────────────────────────────────
 // Maps canonical lookup key → additional historical keys to also include.
 // Used when a player registered under a different name in prior years.
-const GC_PLAYER_ALIASES = {
-  'robert|D': ['mikey|D'],   // Robert Dionne also played as "Mikey Dionne"
-};
+// Ships empty in this public copy: the real entries are player names and live
+// only in the private lybs-reporting repo. Shape: { 'first|L': ['other|L'] }
+const GC_PLAYER_ALIASES = {};
 
 function gcLookup(playerObj) {
   if (typeof GC_STATS === 'undefined') return [];
@@ -280,7 +280,7 @@ function gcLeagueLeaders() {
   if (gcLeagueLeaders._cache) return gcLeagueLeaders._cache;
 
   // Group by year+team so each team/season has its own leaders.
-  // This means Desmond (Minors Blue 2025) and Lucas (Braves 2024) can
+  // This means a Minors pitcher in 2025 and a Braves pitcher in 2024 can
   // both be K Leader in their respective groups independently.
   const groups = {};
   GC_STATS.forEach(p => {

@@ -3,6 +3,10 @@
 > **Nov 2026 — this public repo is CODE ONLY.** Nathan's rule: no player data in any public repo, not even first name + last initial.
 > `data.js` and `gc_stats.js` ship empty here and `processed_data.xlsx` is gitignored. Player records, stats and amounts live only in the
 > private `lybs-reporting` repo. Never run `process.py` output into this repo. Coaches' published contact info is the one allowed exception.
+> `season_records.html` must also ship empty here: card titles only, each showing "Sign in to the Dashboard to see records".
+> The real leaderboards are published to Firestore from lybs-reporting (`publish_data.html`) and open inside the signed-in Dashboard.
+> Same for `GC_PLAYER_ALIASES` in `stats_module.js` (empty `{}` here). Before committing, scan every file, not just data files:
+> `git ls-files | xargs grep -oE "[>'\"][A-Z][a-z]{2,} [A-Z][<'\"]"` should show team names only (e.g. `'Majors B'`).
 
 ## Privacy Rules — Non-Negotiable
 
