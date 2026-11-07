@@ -93,6 +93,13 @@
   .note{font-size:10px;color:var(--text3);padding:8px 14px;
     font-style:italic;border-top:1px solid var(--border);}
 
+  /* ── Public copy: records load only in the signed-in Dashboard ── */
+  .lb-empty{font-size:11px;color:var(--text3);padding:14px;text-align:center;font-style:italic;}
+  .signin-note{margin:0 auto 24px;max-width:640px;padding:12px 16px;border-radius:10px;
+    background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.3);
+    font-size:13px;color:var(--text2);text-align:center;line-height:1.5;}
+  .signin-note a{color:var(--gold);font-weight:700;}
+
   /* ── Separator between groups ─────────────────────────────── */
   .divider{height:1px;background:var(--border);margin:28px 0;}
 
@@ -109,6 +116,13 @@
     <span>👥 94 player-seasons</span>
     <span>🏟 Multiple leagues</span>
   </div>
+</div>
+
+<!-- This public copy ships with no player data. The real leaderboards are
+     published to Firestore from the private lybs-reporting repo and open
+     inside the Dashboard after sign-in. -->
+<div class="signin-note">
+  Player records are private. <a href="https://lybs-dashboard.web.app/">Sign in to the LYBS Dashboard</a> to see the leaderboards.
 </div>
 
 <!-- Tabs -->
@@ -136,35 +150,7 @@
           <span class="lb-card-title c-gold">Batting Average</span>
           <span class="lb-card-icon">🎯</span>
         </div>
-        <div class="lb-row gold-row">
-          <div class="lb-rank r1">1</div>
-          <div class="lb-info">
-            <div class="lb-name">Lucas T <span class="medal">🥇</span></div>
-            <div class="lb-ctx">Braves '24</div>
-            <div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div>
-          </div>
-          <div class="lb-val c-gold">.865</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r2">2</div>
-          <div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:86%;background:#60a5fa;"></div></div></div>
-          <div class="lb-val c-blue">.750</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r3">3</div>
-          <div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:85%;background:#a78bfa;"></div></div></div>
-          <div class="lb-val c-purple">.739</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">4</div>
-          <div class="lb-info"><div class="lb-name">Leo C</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:84%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">.731</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">5</div>
-          <div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:83%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">.718</div>
-        </div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- OBP -->
@@ -173,32 +159,7 @@
           <span class="lb-card-title c-green">On-Base Percentage</span>
           <span class="lb-card-icon">🟢</span>
         </div>
-        <div class="lb-row gold-row">
-          <div class="lb-rank r1">1</div>
-          <div class="lb-info"><div class="lb-name">Logan M <span class="medal">🥇</span></div><div class="lb-ctx">LG 2024 '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div>
-          <div class="lb-val c-gold">.920</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r2">2</div>
-          <div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:96%;background:#60a5fa;"></div></div></div>
-          <div class="lb-val c-blue">.886</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r3">3</div>
-          <div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:92%;background:#a78bfa;"></div></div></div>
-          <div class="lb-val c-purple">.850</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">4</div>
-          <div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:92%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">.846</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">4</div>
-          <div class="lb-info"><div class="lb-name">Jason D</div><div class="lb-ctx">LG 2024 '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:92%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">.846</div>
-        </div>
-        <div class="note">Logan M's .920 OBP is the all-time record — he walked 68% of plate appearances.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- OPS -->
@@ -207,32 +168,7 @@
           <span class="lb-card-title c-gold">OPS</span>
           <span class="lb-card-icon">💥</span>
         </div>
-        <div class="lb-row gold-row">
-          <div class="lb-rank r1">1</div>
-          <div class="lb-info"><div class="lb-name">Lucas T <span class="medal">🥇</span></div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div>
-          <div class="lb-val c-gold">2.616</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r2">2</div>
-          <div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:#60a5fa;"></div></div></div>
-          <div class="lb-val c-blue">1.971</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r3">3</div>
-          <div class="lb-info"><div class="lb-name">Leo C</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:74%;background:#a78bfa;"></div></div></div>
-          <div class="lb-val c-purple">1.931</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">4</div>
-          <div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:72%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">1.885</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">5</div>
-          <div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:71%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">1.850</div>
-        </div>
-        <div class="note">Lucas T's 2.616 OPS is in a category of its own — 2nd place is 0.645 behind.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- SLG -->
@@ -241,31 +177,7 @@
           <span class="lb-card-title c-orange">Slugging %</span>
           <span class="lb-card-icon">💪</span>
         </div>
-        <div class="lb-row gold-row">
-          <div class="lb-rank r1">1</div>
-          <div class="lb-info"><div class="lb-name">Lucas T <span class="medal">🥇</span></div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div>
-          <div class="lb-val c-gold">1.730</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r2">2</div>
-          <div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:68%;background:#60a5fa;"></div></div></div>
-          <div class="lb-val c-blue">1.182</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank r3">3</div>
-          <div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:65%;background:#a78bfa;"></div></div></div>
-          <div class="lb-val c-purple">1.125</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">4</div>
-          <div class="lb-info"><div class="lb-name">Leo C</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:64%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">1.115</div>
-        </div>
-        <div class="lb-row">
-          <div class="lb-rank">5</div>
-          <div class="lb-info"><div class="lb-name">Emmett B</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:58%;background:rgba(255,255,255,0.2);"></div></div></div>
-          <div class="lb-val" style="color:var(--text2);">1.000</div>
-        </div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
     </div>
@@ -278,83 +190,49 @@
       <!-- Hits -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-blue">Hits</span><span class="lb-card-icon">⚾</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">32</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:87%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">28</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:78%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">25</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:69%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">22</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Leo C</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:59%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">19</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- RBI -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-orange">RBI</span><span class="lb-card-icon">🏆</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T <span class="medal">🏆</span></div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">41</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:49%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">20</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:46%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">19</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:41%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">17</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Emmett B</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:41%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">17</div></div>
-        <div class="note">41 RBI in a 15-game season is extraordinary — nearly 3 per game.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Runs -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-teal">Runs Scored</span><span class="lb-card-icon">🏃</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">29</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:97%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">28</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:83%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">24</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Robert D</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:79%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">23</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:76%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">22</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Total Bases -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-purple">Total Bases</span><span class="lb-card-icon">📦</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">64</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:61%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">39</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:58%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">37</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:52%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">33</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Leo C</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:45%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">29</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- XBH -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-orange">Extra Base Hits</span><span class="lb-card-icon">💥</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">18</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:50%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">9</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:44%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">8</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:39%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">7</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Emmett B</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:39%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">7</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- HR -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-red">Home Runs</span><span class="lb-card-icon">🚀</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">5</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:80%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">4</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Justin W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:20%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">1</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Bryce M</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:20%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">1</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Jaxson P</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:20%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">1</div></div>
-        <div class="note">Home runs are rare at this age — only 9 were hit across all recorded seasons.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Triples -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-teal">Triples</span><span class="lb-card-icon">⚡</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">4</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">4</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Bryce M</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:50%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">2</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:50%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Jaxson P</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:50%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Doubles -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-blue">Doubles</span><span class="lb-card-icon">✌️</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">9</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:56%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">5</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:56%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">5</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Jude P</div><div class="lb-ctx">Majors B '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:56%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">5</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Emmett B</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:56%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">5</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
     </div>
@@ -373,44 +251,25 @@
       <!-- Walk Rate -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-green">Walk Rate (BB/PA)</span><span class="lb-card-icon">🚶</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Logan J <span class="medal">🥇</span></div><div class="lb-ctx">LG '23</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">71.4%</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Logan M</div><div class="lb-ctx">LG 2024 '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:95%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">68.0%</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">LG '23</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:87%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">61.8%</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Achillieas K</div><div class="lb-ctx">LG 2024 '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:73%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">52.2%</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Bryce P</div><div class="lb-ctx">LG '23</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:67%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">48.1%</div></div>
-        <div class="note">Logan J walked in 71% of PAs — one of the most patient seasons on record.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Walks (raw) -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-green">Walks (Raw)</span><span class="lb-card-icon">🎫</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Justin W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">21</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">LG '23</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">21</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Logan J</div><div class="lb-ctx">LG '23</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:95%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">20</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:90%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">19</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Michael W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:81%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">17</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- K Rate (best contact) -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-teal">Contact Rate (Fewest K%)</span><span class="lb-card-icon">🎯</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Henry G <span class="medal">🥇</span></div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">2.6%</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Ryan K</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:85%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">3.1%</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:51%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">5.4%</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Leo C</div><div class="lb-ctx">Leominster '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:34%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">7.7%</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:30%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">9.1%</div></div>
-        <div class="note">Henry G struck out just once all season in 39 AB — an extraordinary contact season.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- QAB% -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-purple">Quality At-Bat %</span><span class="lb-card-icon">💡</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">129%</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:99%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">128%</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:84%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">108%</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Bryce M</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:84%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">108%</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Justin W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:83%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">108%</div></div>
-        <div class="note">QAB% can exceed 100% — it means nearly every AB was productive even when it didn't result in a hit.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
     </div>
@@ -429,24 +288,13 @@
       <!-- SB Volume -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-purple">Stolen Bases (Season)</span><span class="lb-card-icon">💨</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Henry G <span class="medal">🥇</span></div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">51</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">38</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Lincoln A</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:63%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">32</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Thomas D</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:59%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">30</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Justin W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:57%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">29</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:57%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">29</div></div>
-        <div class="note">Henry G's 51 SB in a 15-game season — more than 3 per game — is the all-time record by a wide margin.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- SB Success Rate -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-green">SB Success Rate (min 10 att)</span><span class="lb-card-icon">✅</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">100%</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Timmy S</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">100%</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Dean A</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">100%</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">100%</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:98%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">98%</div></div>
-        <div class="note">Henry G is #5 despite having by far the most stolen bases (51) — showing both volume AND efficiency.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
     </div>
@@ -465,84 +313,49 @@
       <!-- WHIP -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-green">WHIP (Best)</span><span class="lb-card-icon">🎯</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Desmond S <span class="medal">🥇</span></div><div class="lb-ctx">Minors Blue '25 · 20.3 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">1.52</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24 · 23.1 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:87%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">1.63</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25 · 27.0 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:72%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">1.81</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25 · 15.0 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:64%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">1.93</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Timmy S</div><div class="lb-ctx">Minors Black '25 · 20.7 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:63%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2.03</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- ERA -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-green">ERA (Lowest)</span><span class="lb-card-icon">🔒</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T <span class="medal">🥇</span></div><div class="lb-ctx">Braves '24 · 23.1 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">1.50</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25 · 20.3 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:36%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">4.13</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25 · 27.0 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:36%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">4.22</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Grayson B</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:36%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">4.26</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:35%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">4.38</div></div>
-        <div class="note">Lucas T's 1.50 ERA stands alone — 2nd place is nearly 3 runs higher.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- K/BB -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-blue">K/BB Ratio (Best Command)</span><span class="lb-card-icon">⚡</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Jacob W <span class="medal">🥇</span></div><div class="lb-ctx">Minors Black '25 · 15 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">3.88</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25 · 20.3 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:79%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">3.07</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24 · 23.1 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">2.90</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24 · 15.7 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:67%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2.60</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Tommy I</div><div class="lb-ctx">LG '23 · 19 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:62%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2.41</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- BB/IP -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-teal">BB/IP (Fewest Walks)</span><span class="lb-card-icon">🎯</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Jacob W <span class="medal">🥇</span></div><div class="lb-ctx">Minors Black '25 · 15 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">0.53</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Connor G</div><div class="lb-ctx">Majors B '25 · 16.3 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:87%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">0.61</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Clint G</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:77%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">0.68</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:70%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">0.74</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Grayson B</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:60%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">0.87</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- BAA -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-pink">BAA (Batting Avg Against)</span><span class="lb-card-icon">👻</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Thomas M <span class="medal">🥇</span></div><div class="lb-ctx">Minors Black '25 · 14.7 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">.131</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Timmy S</div><div class="lb-ctx">Minors Black '25 · 20.7 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:57%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">.174</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24 · 23.1 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:52%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">.200</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25 · 27 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:46%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">.213</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25 · 20.3 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:44%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">.216</div></div>
-        <div class="note">Thomas M's .131 BAA is the record — hitters made contact less than 1-in-8 at-bats against him.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- FIP -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-purple">FIP (Defense-Independent)</span><span class="lb-card-icon">🧮</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">0.57</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">0.57</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:73%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">0.79</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:57%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">0.99</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Ryan K</div><div class="lb-ctx">LKS '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:46%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">1.21</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- K/IP -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-orange">K per IP (Stuff)</span><span class="lb-card-icon">🌪</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">2.61</div></div>
-        <div class="lb-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Ryan K</div><div class="lb-ctx">LKS '25 · 18 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">2.61</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:95%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">2.49</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Justin W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:93%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2.44</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Thomas M</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:89%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">2.32</div></div>
-        <div class="note">Ryan K from LKS '25 matches Lucas T exactly — the standout select arm not in the Majors pool.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Total Ks -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-red">Strikeouts (Season)</span><span class="lb-card-icon">🔥</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Lucas T <span class="medal">🥇</span></div><div class="lb-ctx">Braves '24 · 23.1 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">61</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25 · 27 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:85%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">52</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Ryan K</div><div class="lb-ctx">LKS '25 · 18 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:77%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">47</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25 · 20.3 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">46</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Timmy S</div><div class="lb-ctx">Minors Black '25 · 20.7 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">46</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
     </div>
@@ -561,32 +374,19 @@
       <!-- IP -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-blue">Innings Pitched</span><span class="lb-card-icon">⏱</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Luke B <span class="medal">🥇</span></div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">27.0</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:86%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">23.1</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Timmy S</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:77%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">20.7</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Desmond S</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">20.3</div></div>
-        <div class="lb-row"><div class="lb-rank">5</div><div class="lb-info"><div class="lb-name">Tommy I</div><div class="lb-ctx">LG '23</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:70%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">19.0</div></div>
-        <div class="note">Luke B leads all-time IP in a single season — a workhorse arm across 12 appearances.</div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- GS -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-teal">Starts (Season)</span><span class="lb-card-icon">🚀</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Ryan K <span class="medal">🥇</span></div><div class="lb-ctx">LKS '25 · 18 IP</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">7</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Luke B</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:86%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">6</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Wesley L</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:71%;background:#a78bfa;"></div></div></div><div class="lb-val c-purple">5</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:71%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">5</div></div>
-        <div class="lb-row"><div class="lb-rank r3">3</div><div class="lb-info"><div class="lb-name">Jimmy M</div><div class="lb-ctx">Majors B '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:71%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">5</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
       <!-- Appearances -->
       <div class="lb-card">
         <div class="lb-card-head"><span class="lb-card-title c-purple">Pitching Appearances</span><span class="lb-card-icon">👋</span></div>
-        <div class="lb-row gold-row"><div class="lb-rank r1">1</div><div class="lb-info"><div class="lb-name">Luke B <span class="medal">🥇</span></div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:100%;background:var(--gold);"></div></div></div><div class="lb-val c-gold">12</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Justin W</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:83%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">10</div></div>
-        <div class="lb-row"><div class="lb-rank r2">2</div><div class="lb-info"><div class="lb-name">Jacob W</div><div class="lb-ctx">Minors Black '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:83%;background:#60a5fa;"></div></div></div><div class="lb-val c-blue">10</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Henry G</div><div class="lb-ctx">Minors Blue '25</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">9</div></div>
-        <div class="lb-row"><div class="lb-rank">4</div><div class="lb-info"><div class="lb-name">Lucas T</div><div class="lb-ctx">Braves '24</div><div class="lb-bar-wrap"><div class="lb-bar" style="width:75%;background:rgba(255,255,255,0.2);"></div></div></div><div class="lb-val" style="color:var(--text2);">9</div></div>
+        <div class="lb-empty">Sign in to the Dashboard to see records</div>
       </div>
 
     </div>

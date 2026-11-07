@@ -2193,7 +2193,7 @@ function renderLeagueIntel() {
 
   // ── 3. Cross-sport players ────────────────────────────────────────────
   // Include city in the key to avoid false positives when two different families
-  // share the same first name and last initial (e.g. Olivia M from different cities)
+  // share the same first name and last initial (e.g. two players with the same first name and initial from different cities)
   const bbPlayers = latestPlayers.filter(p=>p.sport==='Baseball');
   const sbPlayers = latestPlayers.filter(p=>p.sport==='Softball');
   const bbKeys = new Set(bbPlayers.map(p=>`${p.first}|${(p.last||'')[0]||''}|${(p.city||'').toLowerCase()}`));
