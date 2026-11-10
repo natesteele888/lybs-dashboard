@@ -4837,9 +4837,9 @@ function renderAuthScreen() {
             }
             <button id="authLoginBtn" class="btn btn-gold" onclick="authDoLogin()" style="width:100%;padding:11px;">Sign In</button>
             <div style="text-align:center;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:16px;">
-              <button onclick="authShowTab('reset')" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans';">Forgot password?</button>
+              <button onclick="authShowTab('reset')" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans';min-height:32px;padding:0 8px;">Forgot password?</button>
               <span style="color:var(--border);font-size:11px;">·</span>
-              <button onclick="authOfflineBypass()" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans';" title="Use if cloud sync is unreachable">Offline mode</button>
+              <button onclick="authOfflineBypass()" style="background:none;border:none;color:var(--text2);font-size:11px;cursor:pointer;text-decoration:underline;font-family:'DM Sans';min-height:32px;padding:0 8px;" title="Use if cloud sync is unreachable">Offline mode</button>
             </div>
           </div>
 
