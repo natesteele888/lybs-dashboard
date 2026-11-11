@@ -184,9 +184,13 @@ function loadDraftState() {
 
 // ── Cross-device relay (local WiFi — requires draft_relay.js running) ────────
 const _RELAY_URL = 'http://localhost:3001';
+// The relay runs on the admin's laptop, so only try it when the page is opened there.
+// Anywhere else every probe and post failed, logging an error on each page load.
+const _RELAY_LOCAL = ['localhost', '127.0.0.1', ''].includes(location.hostname);
 let _relayEnabled = false;
 
 function _relayPost(endpoint, data) {
+  if (!_RELAY_LOCAL) return;
   fetch(_RELAY_URL + endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -200,7 +204,7 @@ function _relayPost(endpoint, data) {
 }
 
 // Probe relay on startup (silent — only logs if running)
-setTimeout(() => {
+if (_RELAY_LOCAL) setTimeout(() => {
   fetch(_RELAY_URL + '/status').then(r => r.ok && (_relayEnabled = true)).catch(() => {});
 }, 1500);
 
