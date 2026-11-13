@@ -157,7 +157,7 @@ html, body {
 }
 #compare-title { font-family: 'Bebas Neue'; font-size: 20px; color: var(--gold); letter-spacing: 1px; }
 #compare-close-btn {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   background: rgba(255,255,255,0.08); border: none; color: var(--text2);
   font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
@@ -254,7 +254,7 @@ html, body {
 }
 #roster-title { font-family: 'Bebas Neue'; font-size: 20px; }
 #roster-close {
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   background: rgba(255,255,255,0.08);
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; cursor: pointer; color: var(--text2);
@@ -290,7 +290,7 @@ html, body {
 #banner-pick { font-family:'Bebas Neue'; font-size:11px; letter-spacing:1.5px; color:rgba(255,255,255,.6); }
 #banner-name { font-family:'Bebas Neue'; font-size:22px; line-height:1.1; }
 #banner-team { font-size:11px; color:rgba(255,255,255,.7); margin-top:1px; }
-#banner-x { font-size:18px; opacity:.4; padding:4px; margin-left:auto; }
+#banner-x { font-size:18px; opacity:.4; min-width:40px; min-height:40px; display:flex; align-items:center; justify-content:center; margin-left:auto; }
 
 /* backdrop */
 #backdrop { display:none; position:fixed; inset:0; z-index:55; background:rgba(0,0,0,.45); }
@@ -819,21 +819,9 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-bc.onmessage = e => {
-  const d = e.data;
-  if (d.type === 'draft_state') applyState(d.state);
-  if (d.type === 'draft_pick') {
-    showBanner(d.pick, d.state);
-    setTimeout(() => applyState(d.state), 5000);
-  }
-  if (d.type === 'ping') bc.postMessage({ type: 'pong' });
-};
-
-setTimeout(() => bc.postMessage({ type: 'request_state' }), 500);
-const _req = setInterval(() => {
-  if (_state) clearInterval(_req);
-  else bc.postMessage({ type: 'request_state' });
-}, 8000);
+// (An orphaned copy of the BroadcastChannel handler lived here, referencing a
+// `bc` that only exists inside the transport block above. It threw
+// ReferenceError at load. The transport block already owns that channel.)
 </script>
 </body>
 </html>
